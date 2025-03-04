@@ -1,5 +1,5 @@
 /databases/
-
+.DS_Store
 **/input/
 **/output/
 !**/example/**/input/
