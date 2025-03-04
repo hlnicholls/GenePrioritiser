@@ -1,0 +1,444 @@
+Gene	label
+MDS2	least likely
+SSBP3-AS1	least likely
+MROH7-TTC4	least likely
+DLEU2L	least likely
+NBPF8	least likely
+OR10J3	least likely
+MPZ	least likely
+FMO6P	least likely
+METTL13	least likely
+C1orf220	least likely
+TMEM78	least likely
+TSNAX-DISC1	least likely
+OR2T7	least likely
+LINC01119	least likely
+LINC01118	least likely
+MDH1	least likely
+LINC01101	least likely
+C2orf27A	least likely
+LINC01124	least likely
+DIRC3	least likely
+TPRXL	least likely
+LINC00692	least likely
+C3orf35	least likely
+SACM1L	least likely
+GPX1	least likely
+LINC01100	least likely
+LINC00955	least likely
+FAM90A26	least likely
+TMPRSS11BNL	least likely
+MAPK10	least likely
+LINC01098	least likely
+DUX4L7	least likely
+DUX4L6	least likely
+DUX4L5	least likely
+DUX4L4	least likely
+DUX4L3	least likely
+DUX4L2	least likely
+C5orf64	least likely
+ANKHD1-EIF4EBP3	least likely
+C5orf60	least likely
+EEF1E1-BLOC1S5	least likely
+OFCC1	least likely
+HCG27	least likely
+ATP6V1G2-DDX39B	least likely
+MSH5-SAPCD1	least likely
+GGNBP1	least likely
+VEGFA	least likely
+AMD1	least likely
+KIAA0087	least likely
+ST7-OT4	least likely
+PAXIP1-AS2	least likely
+HTR5A-AS1	least likely
+BLACE	least likely
+OPRK1	least likely
+C8orf44	least likely
+C8orf44-SGK3	least likely
+REXO1L1P	least likely
+REXO1L11P	least likely
+REXO1L10P	least likely
+C8orf17	least likely
+DKFZP434A062	least likely
+C9orf163	least likely
+PTCHD3	least likely
+FAM25E	least likely
+ARHGAP19-SLIT1	least likely
+TLX1NB	least likely
+C11orf40	least likely
+OR51J1	least likely
+OR56B3P	least likely
+OR52B1P	least likely
+ACP2	least likely
+ZFP91-CNTF	least likely
+HNRNPUL2-BSCL2	least likely
+CASP12	least likely
+COLCA1	least likely
+HSPB2-C11orf52	least likely
+KLRC4-KLRK1	least likely
+LOH12CR2	least likely
+LDHB	least likely
+OVCH1-AS1	least likely
+VDR	least likely
+CLLU1	least likely
+DNAH10OS	least likely
+BRI3BP	least likely
+DLEU1	least likely
+DHRS4-AS1	least likely
+SLC25A21-AS1	least likely
+TTC6	least likely
+GABARAPL3	least likely
+C15orf32	least likely
+SPATA8	least likely
+LINC00923	least likely
+P2RX5-TAX1BP3	least likely
+RNASEK-C17orf49	least likely
+TMEM256-PLSCR3	least likely
+FAM106A	least likely
+ZNF286B	least likely
+UBBP4	least likely
+CCL15-CCL14	least likely
+FAM215A	least likely
+DNAH17-AS1	least likely
+C1QTNF1-AS1	least likely
+AQP4	least likely
+GTSCR1	least likely
+ZNF625-ZNF20	least likely
+RPSAP58	least likely
+RAB4B-EGLN2	least likely
+APOC4-APOC2	least likely
+TPRX2P	least likely
+C19orf84	least likely
+ZNF321P	least likely
+BIRC8	least likely
+KIR3DX1	least likely
+PRNT	least likely
+FAM182B	least likely
+SYS1-DBNDD2	least likely
+PPP4R1L	least likely
+STX16-NPEPL1	least likely
+DSCR4	least likely
+DSCR8	least likely
+FAM230A	least likely
+LL22NC03-63E9.3	least likely
+GSTT2	least likely
+RFPL3S	least likely
+C22orf46	least likely
+CHKB-CPT1B	least likely
+GABRD	probable
+ECE1	probable
+CNR2	probable
+GRIK3	probable
+NDUFS5	probable
+FAAH	probable
+PDE4B	probable
+PTGER3	probable
+PTGFR	probable
+BRDT	probable
+AMY2A	probable
+ADORA3	probable
+ATP1A1	probable
+IL6R	probable
+CHRNB2	probable
+ATP1A2	probable
+ATP1A4	probable
+NDUFS2	probable
+SERPINC1	probable
+PTGS2	probable
+CACNA1S	probable
+ADORA1	probable
+REN	probable
+HSD11B1	probable
+KCNK2	probable
+PARP1	probable
+CHRM3	probable
+RRM2	probable
+ROCK2	probable
+KCNK3	probable
+XDH	probable
+IL1R1	probable
+GPD2	probable
+DPP4	probable
+SCN3A	probable
+SCN2A	probable
+SCN1A	probable
+SCN9A	probable
+SCN7A	probable
+PDK1	probable
+CHRNA1	probable
+NFE2L2	probable
+NDUFB3	probable
+NDUFS1	probable
+PDE6D	probable
+CHRND	probable
+CHRNG	probable
+TRPM8	probable
+NDUFA10	probable
+OXTR	probable
+PPARG	probable
+RAF1	probable
+SCN5A	probable
+SCN10A	probable
+SCN11A	probable
+NDUFAF3	probable
+IMPDH2	probable
+PARP3	probable
+NISCH	probable
+CD80	probable
+NDUFB4	probable
+CD86	probable
+AGTR1	probable
+P2RY12	probable
+NDUFB5	probable
+PDE6B	probable
+ADRA2C	probable
+GABRG1	probable
+GABRA2	probable
+GABRA4	probable
+GABRB1	probable
+PDGFRA	probable
+KIT	probable
+KDR	probable
+GNRHR	probable
+ENPEP	probable
+PDE5A	probable
+NDUFC1	probable
+NR3C2	probable
+GUCY1A1	probable
+GUCY1B1	probable
+GRIA2	probable
+RXFP1	probable
+MTNR1A	probable
+NDUFS6	probable
+NDUFS4	probable
+IL6ST	probable
+PDE4D	probable
+NDUFAF2	probable
+HMGCR	probable
+PDE8B	probable
+NDUFA2	probable
+NR3C1	probable
+PDE6A	probable
+CSF1R	probable
+PDGFRB	probable
+GLRA1	probable
+GRIA1	probable
+ADRA1B	probable
+GABRB2	probable
+GABRA6	probable
+GABRA1	probable
+GABRG2	probable
+GABRP	probable
+DRD1	probable
+FLT4	probable
+TUBB2A	probable
+TUBB2B	probable
+TUBB	probable
+TNF	probable
+BRD2	probable
+GLP1R	probable
+SLC29A1	probable
+CNR1	probable
+NDUFAF4	probable
+GRIK2	probable
+PDE7B	probable
+MAP3K5	probable
+ESR1	probable
+OPRM1	probable
+MAS1	probable
+PDE10A	probable
+NDUFA4	probable
+PDE1C	probable
+INHBA	probable
+NPC1L1	probable
+DDC	probable
+PDK4	probable
+CYP3A5	probable
+CYP3A7	probable
+CYP3A4	probable
+CYP3A43	probable
+NDUFA5	probable
+IMPDH1	probable
+TBXAS1	probable
+NDUFB2	probable
+BRAF	probable
+MGAM	probable
+ADRA1A	probable
+ADRB3	probable
+IKBKB	probable
+PDE7A	probable
+TRPA1	probable
+CA1	probable
+CA2	probable
+NDUFB9	probable
+KCNK9	probable
+PTK2	probable
+CYP11B1	probable
+NDUFB6	probable
+GRIN3A	probable
+C5	probable
+NDUFA8	probable
+PTGS1	probable
+ABL1	probable
+DBH	probable
+BRD3	probable
+GRIN1	probable
+TUBB4B	probable
+RET	probable
+ALOX5	probable
+PDE6C	probable
+NDUFB8	probable
+ADRA2A	probable
+KCNK18	probable
+SLC18A2	probable
+TH	probable
+PDE3B	probable
+ABCC8	probable
+TPH1	probable
+F2	probable
+NDUFS3	probable
+CHRM1	probable
+SLC22A12	probable
+NDUFV1	probable
+NDUFS8	probable
+PDE2A	probable
+NDUFC2	probable
+MTNR1B	probable
+GRIA4	probable
+GUCY1A2	probable
+GRIK4	probable
+NDUFA9	probable
+SCNN1A	probable
+GRIN2B	probable
+PDE6H	probable
+PDE3A	probable
+KCNJ8	probable
+VDR	probable
+SCN8A	probable
+PDE1B	probable
+NDUFA4L2	probable
+AVPR1A	probable
+NDUFA12	probable
+PAH	probable
+FLT3	probable
+FLT1	probable
+RXFP2	probable
+GUCY1B2	probable
+EDNRB	probable
+F10	probable
+PARP2	probable
+PTGER2	probable
+ESR2	probable
+KCNK10	probable
+NDUFB1	probable
+GABRB3	probable
+GABRA5	probable
+GABRG3	probable
+NDUFAF1	probable
+SLC12A1	probable
+CYP19A1	probable
+CA12	probable
+CHRNA3	probable
+CHRNB4	probable
+PDE8A	probable
+NDUFB10	probable
+GRIN2A	probable
+NDUFAB1	probable
+VKORC1	probable
+SLC5A2	probable
+SLC6A2	probable
+SLC12A3	probable
+TUBB3	probable
+TRPV1	probable
+CHRNE	probable
+CHRNB1	probable
+ADORA2B	probable
+SLC6A4	probable
+PDK2	probable
+CA4	probable
+SCN4A	probable
+GRIN2C	probable
+NDUFV2	probable
+TUBB6	probable
+MC2R	probable
+ROCK1	probable
+GRIN3B	probable
+NDUFS7	probable
+TBXA2R	probable
+NDUFA11	probable
+TUBB4A	probable
+INSR	probable
+NDUFA7	probable
+PDE4A	probable
+KEAP1	probable
+NDUFB7	probable
+BRD4	probable
+PDE4C	probable
+NDUFA13	probable
+ATP4A	probable
+ATP1A3	probable
+GRIK5	probable
+PTGIR	probable
+GRIN2D	probable
+NDUFA3	probable
+FKBP1A	probable
+ADRA1D	probable
+TUBB1	probable
+GRIK1	probable
+PDE9A	probable
+NDUFV3	probable
+BCR	probable
+ADORA2A	probable
+NDUFA6	probable
+PPARA	probable
+ABCC9	most likely
+ACBD4	most likely
+ACE	most likely
+ADRA2B	most likely
+ADRB1	most likely
+ADRB2	most likely
+AGT	most likely
+APOE	most likely
+CACNA1C	most likely
+CACNA1D	most likely
+CACNA2D2	most likely
+CACNB2	most likely
+CACNB4	most likely
+CAMK2B	most likely
+CAST	most likely
+CCND1	most likely
+CLCN6	most likely
+CYP11B2	most likely
+CYP1A2	most likely
+CYP2C19	most likely
+DSP	most likely
+DUSP1	most likely
+EDN1	most likely
+EDNRA	most likely
+GJA1	most likely
+GUCY1A3	most likely
+GUCY1B3	most likely
+HFE	most likely
+HSPA4	most likely
+ITGB5	most likely
+KCNJ11	most likely
+LDLR	most likely
+MME	most likely
+MYO9B	most likely
+NEDD4L	most likely
+NPPA	most likely
+NPPB	most likely
+NPR1	most likely
+NPR3	most likely
+PDE1A	most likely
+PGR	most likely
+PKD2L1	most likely
+PLCD3	most likely
+RAD52	most likely
+SHBG	most likely
+SLC12A2	most likely
+SLC14A2	most likely
+SLC2A4	most likely
+SLC5A1	most likely
+TGFB1	most likely
+VEGFA	most likely
