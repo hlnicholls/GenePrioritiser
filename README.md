@@ -1,5 +1,6 @@
 
 ```
+conda env create -f GenePrioritiser_env.yml
 conda activate GenePrioritiser_env 
 pip install pyensembl
 pyensembl install --release 105 --species homo_sapiens
