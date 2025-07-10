@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
 sys.path.append(CONFIG_DIR)
 import config
