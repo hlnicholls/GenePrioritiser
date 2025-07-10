@@ -4,11 +4,10 @@ import pandas as pd
 from pyensembl import EnsemblRelease  # PyEnsembl is used to annotate genes. You may need to install this package.
 import sys
 CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
 sys.path.append(CONFIG_DIR)
 import config
-
 
 # Initialize the EnsemblRelease (modify release number as needed for reference)
 data = EnsemblRelease(105) # GRCh37

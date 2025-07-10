@@ -3,10 +3,11 @@ import sys
 import pandas as pd
 import os
 CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
 sys.path.append(CONFIG_DIR)
 import config
+
 script_dir = config.eda_script_path
 sys.path.append(script_dir)
 from updated_MissForest_Algorithm import MissForest

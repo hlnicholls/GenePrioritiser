@@ -4,7 +4,7 @@ library(reshape2)
 library(dplyr)
 
 # Read the data
-data <- read.csv("/data/WHRI-Bioinformatics/Nicholls/BP_Gene_Prioritisation/BP_Gene_Prior_v2/2_machine_learning/Multiclass/Output/fold_balanced_accuracies.csv")
+data <- read.csv("/machine_learning/multiclass/output/fold_balanced_accuracies.csv")
 
 # Melt the data for ggplot2
 data_melted <- melt(data, id.vars = 'X', variable.name = 'Fold', value.name = 'Balanced_Accuracy')
@@ -34,5 +34,5 @@ plot <- data_melted %>%
   ylab("Balanced Accuracy")
 
 # Save the plot
-ggsave("/data/WHRI-Bioinformatics/Nicholls/BP_Gene_Prioritisation/BP_Gene_Prior_v2/2_machine_learning/Multiclass/Output/model_performance_violin_plot.png",
+ggsave("/machine_learning/multiclass/output/model_performance_violin_plot.png",
        plot = plot, width = 18, height = 8, dpi = 300, limitsize = FALSE)

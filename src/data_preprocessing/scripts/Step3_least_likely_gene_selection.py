@@ -3,11 +3,10 @@ from itertools import chain
 import sys
 import os
 CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
 sys.path.append(CONFIG_DIR)
 import config
-
 
 protein_alias = pd.read_csv(
     os.path.join(config.database_string_path , '9606.protein.aliases.v12.0.txt.gz'),

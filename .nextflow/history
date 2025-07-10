@@ -1,0 +1,13 @@
+2025-03-05 10:38:33	-	sad_church	-	3bc6a022ab9dcdab2419d8df3750206d	897ecce8-d26a-4c6a-92e9-972bdc5eef7e	nextflow run main.nf -profile conda
+2025-03-05 10:39:08	-	infallible_fermi	-	3bc6a022ab9dcdab2419d8df3750206d	79fb6ff8-4281-4f9b-bce7-e9736d695329	nextflow run main.nf -profile conda
+2025-03-05 10:40:48	-	cheeky_torvalds	-	3bc6a022ab9dcdab2419d8df3750206d	9082796c-7205-40e6-95a0-c19b6651c4e0	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:41:33	-	golden_hopper	-	3bc6a022ab9dcdab2419d8df3750206d	24aa0b68-3939-4a16-b61e-28c8894d8beb	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:42:02	-	loving_boyd	-	99007297d6babb1e70f487010af6f1af	e48d4719-ab6d-41a6-bf33-12c305036d74	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:44:15	-	happy_waddington	-	ae4c8305fec6b16e3116a37c985fbea7	c16d9fd3-186d-40d2-b0ff-a93c0cbab10d	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:48:05	-	deadly_hamilton	-	45d4fad039e3ad5948dad23cec9a0931	8fd27fb9-048b-4baa-b986-58ccdb8a83b0	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:53:49	-	zen_carlsson	-	e4a8bc0eff4502c296bf067f6126d9cf	1c2127e6-4bcc-4b68-a0f2-6e31225b6249	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:54:36	-	determined_stone	-	34f3f11864b18dc751bf6452d6a5577d	edf2fdbe-0bfa-4d5c-b57f-a1c1ead56120	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:54:59	-	nauseous_lamport	-	e4a8bc0eff4502c296bf067f6126d9cf	e4031602-873a-4eb9-bbbd-bf1f3ab5583c	nextflow run main.nf -profile conda -c nextflow.config
+2025-03-05 10:55:18	22.9s	fabulous_roentgen	ERR	7d29385203ca6e2f86d65778bca42490	8fc7b241-397c-426b-b7ef-34cccdf502e6	nextflow run main.nf -profile conda -c nextflow.config
+2025-07-10 11:57:49	1m 4s	extravagant_lichterman	ERR	7d29385203ca6e2f86d65778bca42490	95756c09-cac4-4857-8607-03abbbcb10cc	nextflow run main.nf -profile conda
+2025-07-10 12:00:27	28m 3s	angry_avogadro	OK	7d29385203ca6e2f86d65778bca42490	80143d30-6e47-401b-935f-9c00116106e7	nextflow run main.nf -profile conda

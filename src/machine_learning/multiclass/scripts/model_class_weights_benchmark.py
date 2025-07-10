@@ -4,10 +4,11 @@ import pickle
 import sys
 import os
 CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
 sys.path.append(CONFIG_DIR)
 import config
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Input
 from scikeras.wrappers import KerasClassifier
