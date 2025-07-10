@@ -11,3 +11,14 @@
 2025-03-05 10:55:18	22.9s	fabulous_roentgen	ERR	7d29385203ca6e2f86d65778bca42490	8fc7b241-397c-426b-b7ef-34cccdf502e6	nextflow run main.nf -profile conda -c nextflow.config
 2025-07-10 11:57:49	1m 4s	extravagant_lichterman	ERR	7d29385203ca6e2f86d65778bca42490	95756c09-cac4-4857-8607-03abbbcb10cc	nextflow run main.nf -profile conda
 2025-07-10 12:00:27	28m 3s	angry_avogadro	OK	7d29385203ca6e2f86d65778bca42490	80143d30-6e47-401b-935f-9c00116106e7	nextflow run main.nf -profile conda
+2025-07-10 13:29:58	1.5s	elegant_cray	ERR	e852da4f7ff98a300fd47813e59b991b	7c845e96-502f-4131-aa83-13b81a754fa4	nextflow run main.nf -profile conda
+2025-07-10 13:30:19	1.8s	fabulous_legentil	ERR	f7278163867ad4215548f529f6f32670	6963b250-3297-4a4f-b35a-d3a1216960ee	nextflow run main.nf -profile conda
+2025-07-10 13:31:40	1.1s	agitated_spence	ERR	15cf3b7809fd606baefc085565092e0a	22644c42-3570-4b3b-af45-88e432df600d	nextflow run main.nf -profile conda
+2025-07-10 13:32:59	-	mighty_lumiere	-	3501b215a564c7d58dfdd22345a38455	0443bdb4-9d8d-492f-85a0-3cc2ac4e657f	nextflow run main.nf -profile conda
+2025-07-10 13:33:57	1.3s	romantic_faggin	ERR	b7c75c879967597c5031897f62c7fa3d	66adea95-c90a-49a5-9db1-14d5b8703212	nextflow run main.nf -profile conda
+2025-07-10 17:49:38	1.6s	gloomy_tuckerman	ERR	f43051afe1a49c194608259d8b39812e	fd82ab67-3406-472b-9c3c-a4699cd4eed4	nextflow run main.nf -profile conda
+2025-07-10 17:50:55	19m 45s	ecstatic_lagrange	ERR	0935ed4260fb6f42d68a79215cae051c	8b580f2a-2a51-45c2-a8a2-732a62dbd826	nextflow run main.nf -profile conda
+2025-07-10 18:43:11	7.1s	astonishing_mccarthy	ERR	0935ed4260fb6f42d68a79215cae051c	871ed20c-302b-40b1-af51-ebf8eed9ef7f	nextflow run main.nf -profile conda
+2025-07-10 18:44:54	2.6s	angry_minsky	ERR	0935ed4260fb6f42d68a79215cae051c	d4da9450-3d87-4d47-9873-fc56fb41db8b	nextflow run main.nf -profile conda
+2025-07-10 18:46:15	6.2s	happy_boyd	ERR	0935ed4260fb6f42d68a79215cae051c	17c467d6-ad71-4049-a292-234573fd2769	nextflow run main.nf -profile conda
+2025-07-10 18:49:11	-	chaotic_kilby	-	f6efd62e41d4d9c24add80c8bbf3c21b	57c0a6b3-434c-4b06-bd1a-cb2fb9994822	nextflow run main.nf -profile conda

@@ -11,6 +11,8 @@ pip install --force-reinstall numpy==1.23.0
 ```
 
 Inputs/Requirements:
+- Add your GWAS data to ```/src/data_preprocessing/input```
+- Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file name```)
 - GWAS data in format of GWAS catalog format summary statistics in GRCh37
     - File header/column names: ```MarkerName Allele1 Allele2 Freq1 Effect StdErr P TotalSampleSize N_effective```
 - Ensure GWAS file name ends in ```_{phenotype}``` as file name suffix (e.g. "GWAS_Evangelou_DBP.txt.gz" where DBP is the phenotype)
