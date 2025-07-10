@@ -7,6 +7,9 @@ WORKDIR /GenePrioritiser
 # Copy everything from your local repo into the image
 COPY . .
 
+# Install Java (required for Nextflow)
+RUN apt-get update && apt-get install -y openjdk-17-jdk
+
 # Create the Conda environment from the exported YAML
 RUN conda env create -f GenePrioritiser_env.yml
 
@@ -24,4 +27,3 @@ RUN apt-get update && apt-get install -y r-base
 
 # Install required R packages
 RUN Rscript -e "install.packages(c('tidyverse', 'magrittr', 'data.table', 'enrichR', 'org.Hs.eg.db', 'tidygraph', 'plyr', 'janitor'), repos='https://cloud.r-project.org')"
-
