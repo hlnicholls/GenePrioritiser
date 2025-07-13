@@ -1,4 +1,9 @@
 
+
+# Introduction
+GenePrioritiser is a multi-class machine learning approach to prioritise most likely causal disease genes. It is designed for the user to input a GWAS with a phenotype of interest and a list of known most likley disease genes. The pipeline will then identify probably and least likely disease genes (in relation to disease/phenotype-specific drug target interactions and PPIs) and benchmark machine learning models, with the top-performing model providing the final gene prioritisation for all the nearby genes in your GWAS. It includes default features, but also allows for the additional of disease-specific features.
+
+# Installation/setup:
 ```
 conda env create -f GenePrioritiser_env.yml
 conda activate GenePrioritiser_env 
@@ -9,10 +14,11 @@ pip install --force-reinstall scipy==1.11.4
 pip install --force-reinstall numpy==1.23.0
 
 ```
+- Docker container also coming soon.
 
-Inputs/Requirements:
-- Add your GWAS data to ```/src/data_preprocessing/input```
-- Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file name```)
+# Inputs/Requirements:
+- Add your GWAS data to ```/results/data_preprocessing/input```
+- Update the ```/config/config.py``` file for your files (e.g. your GWAS file name)
 - GWAS data in format of GWAS catalog format summary statistics in GRCh37
     - File header/column names: ```MarkerName Allele1 Allele2 Freq1 Effect StdErr P TotalSampleSize N_effective```
 - Ensure GWAS file name ends in ```_{phenotype}``` as file name suffix (e.g. "GWAS_Evangelou_DBP.txt.gz" where DBP is the phenotype)
@@ -57,7 +63,7 @@ C1orf159	0.146139458
 - Add new folders in ```/GenePrioritiser/databases``` for any additional features
 
 Optional input:
-'/GenePrioritiser/example/data_preprocessing/input/Additional_genes_to_filter.txt' can be made to further fitler least likely genes for model training - identify genes via any requirements (e.g. genes with LD in the GWAS) for additional refining of least likely genes
+'/GenePrioritiser/example/data_preprocessing/input/Additional_genes_to_filter.txt' can be made to further filter least likely genes for model training - identify genes via any requirements (e.g. genes with LD in the GWAS) for additional refining of least likely genes. This will reduce your list of least likely genes based on their PPIs with the input additional gene list.
 
 # To Run:
 ```
