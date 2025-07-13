@@ -72,4 +72,4 @@ nextflow run main.nf -profile conda
 ```
 
 ## Outputs
- - Results are found in output subfolders. E.g., ```/GenePrioritiser/src/machine_learning/multiclass/output```
+ - Results are found in output subfolders. E.g., ```/GenePrioritiser/results/machine_learning/multiclass/output```
