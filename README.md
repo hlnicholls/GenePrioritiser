@@ -3,7 +3,6 @@
 Disease-specific gene prioritisation pipeline using GWAS summary statistics and various gene-level features to prioritise genes likely involved in disease.
 
 
-## Setup Environment
 ```
 conda env create -f GenePrioritiser_env.yml
 conda activate GenePrioritiser_env
@@ -13,11 +12,9 @@ pip install --force-reinstall numpy==1.23.0
 pip install scikit-optimize
 ```
 
-## Inputs/Requirements
-
+Inputs/Requirements:
 - Add your GWAS data to ```/src/data_preprocessing/input```
-- **Your GWAS data must be in GRCh37 coordinates**
-- Update the ```/config/config.py``` file for your variables (e.g. your GWAS file name)
+- Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file name```)
 - GWAS data in format of GWAS catalog format summary statistics in GRCh37
     - File header/column names: ```MarkerName Allele1 Allele2 Freq1 Effect StdErr P TotalSampleSize N_effective```
 - Ensure GWAS file name ends in ```_{phenotype}``` as file name suffix (e.g. "GWAS_Evangelou_DBP.txt.gz" where DBP is the phenotype)
@@ -72,7 +69,7 @@ Feature files placed under `GenePrioritiser/databases` should include a `Gene` c
 Add new folders in `GenePrioritiser/databases` for any additional features.
 
 Optional input:
-'/GenePrioritiser/example/data_preprocessing/input/Additional_genes_to_filter.txt' can be made to further fitler least likely genes for model training - identify genes via any requirements (e.g. genes with LD in the GWAS) for additional refining of least likely genes
+'/GenePrioritiser/example/data_preprocessing/input/Additional_genes_to_filter.txt' can be made to further filter least likely genes for model training - identify genes via any requirements (e.g. genes with LD in the GWAS) for additional refining of least likely genes. This will reduce your list of least likely genes based on their PPIs with the input additional gene list.
 
 # To Run:
 ```
@@ -91,4 +88,4 @@ nextflow run main.nf -profile conda
 ```
 
 ## Outputs
- - Results are found in output subfolders. E.g., ```/GenePrioritiser/src/machine_learning/multiclass/output```
+ - Results are found in output subfolders. E.g., ```/GenePrioritiser/results/machine_learning/multiclass/output```
