@@ -4,17 +4,21 @@ PROJECT_DIR = os.environ.get("projectDir", ".")
 
 # 1. Two files need to be provided by the user:
 gwas_path = [
-    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/HF_HRC_GWAS_UKBB_EUR_HF.txt.gz")
-]  # https://www.ebi.ac.uk/gwas/studies/GCST007715
+    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_DBP.txt.gz"),
+    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_SBP.txt.gz"),
+    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_PP.txt.gz")
+]  # https://www.ebi.ac.uk/gwas/publications/30224653
 most_likely_gene_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/most_likely_genes.tsv")
 
 # Download drugs for phenotype of interest from Open Targets:
 ot_phenotype_drugs = os.path.join(PROJECT_DIR, "databases/opentargets/EFO_0000537-known-drugs.tsv")
 
 # 2. Check file paths for all intermediate files:
-gwas_processed_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/HF_HRC_GWAS_UKBB_EUR_HF.txt.gz")
+gwas_processed_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_BP.txt.gz")
 
-input_directory = os.path.join(PROJECT_DIR, "example/data_preprocessing/input")
+least_likely_extra_filter = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv")
+
+input_directory = os.path.join(PROJECT_DIR, "example/data_preprocessing/output")
 variant_output_directory = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/variants")
 variant_database_output_directory = os.path.join(PROJECT_DIR, "databases/variant_level")
 
@@ -22,7 +26,7 @@ database_path = os.path.join(PROJECT_DIR, "databases")
 database_string_path = os.path.join(PROJECT_DIR, "databases/stringdb/")
 
 least_likely_gene_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/least_likely_genes.tsv")
-annotated_gwas = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/variants/Annotated_GWAS_HF.csv")
+annotated_gwas = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/variants/Annotated_GWAS_DBP.csv")
 gene_types = os.path.join(PROJECT_DIR, "utils/hg19Rel92_AllgeneTypes_0kb.txt")
 
 # Probable genes defined by OT gene-drug interactions (not in most likely gene group)
@@ -38,7 +42,7 @@ training_data_all_features_eda = os.path.join(PROJECT_DIR, "example/machine_lear
 genes_to_prioritise = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/gwas_genes_to_prioritise.csv")
 
 # EDA
-eda_script_path = os.path.join(PROJECT_DIR, "src/machine_learning/eda/scripts")
+eda_script_path = os.path.join(PROJECT_DIR, "src/machine_learning/eda")
 feature_missingness_plot = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/feature_missingness.png")
 correlation_pairs_09 = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/correlation_pairs_09.csv")
 correlation_matrix_09 = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/correlation_matrix_09.csv")
@@ -49,7 +53,7 @@ cleaned_training_data_eda = os.path.join(PROJECT_DIR, "example/machine_learning/
 cleaned_training_data_ml = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/input/cleaned_training_data.csv")
 ml_eval_metrics = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/model_evaluation_metrics.csv")
 ml_output_path = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output")
-boruta_shap_script = os.path.join(PROJECT_DIR, "src/machine_learning/multiclass/scripts")
+boruta_shap_script = os.path.join(PROJECT_DIR, "src/machine_learning/multiclass")
 boruta_shap_plot = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/borutashap_feature_importance_plot_no_class_weights.png")
 
 xgb_parameters = {'max_depth': (1, 4), 'learning_rate': (0.01, 0.2, 'log-uniform'), 'n_estimators': (10, 50)}
