@@ -5,3 +5,13 @@ __pycache__/
 *.pyc
 *.ipynb_checkpoints
 .DS_Store
+
+/src/downstream
+
+/example/downstream
+
+/utils/clean_dbs.py
+
+.nextflow
+.pyc
+/work

@@ -3,8 +3,8 @@ python /GenePrioritiser/src/data_preprocessing/scripts/Step0_combine_multiple_GW
 python /GenePrioritiser/src/data_preprocessing/scripts/Step1_annotate_genes.py
 python /GenePrioritiser/src/data_preprocessing/scripts/Step2_process_variant_level_data.py
 python /GenePrioritiser/src/data_preprocessing/scripts/Step3_least_likely_gene_selection.py
-python /GenePrioritiser/src/data_preprocessing/scripts/Step6_identify_training_genes.py
 python /GenePrioritiser/src/data_preprocessing/scripts/Step7_merge_all_databases_and_get_training_data.py
+python /GenePrioritiser/src/data_preprocessing/scripts/Step6_identify_training_genes.py
 python /GenePrioritiser/src/data_preprocessing/scripts/Step8_subset_genes_to_prioritise.py
 python /GenePrioritiser/src/machine_learning/eda/scripts/eda_training_data.py
 python /GenePrioritiser/src/machine_learning/multiclass/scripts/model_benchmark.py

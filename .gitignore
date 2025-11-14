@@ -6,8 +6,19 @@
 !**/example/**/output/
 /catboost_info/
 __pycache__/
+**/__pycache__/
 /example/data_preprocessing/input/HF_HRC_GWAS_UKBB_EUR_HF.txt.gz
 /example/data_preprocessing/output/HF_HRC_GWAS_UKBB_EUR_HF.txt.gz
 /example/data_preprocessing/output/variants/Annotated_GWAS_HF.csv
 
 GenePrioritiser_env_macos.yml
+
+.nextflow
+.pyc
+/work
+
+/src/downstream
+
+/example/downstream
+
+/utils/clean_dbs.py
