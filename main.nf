@@ -1,19 +1,6 @@
-process step0_combine_multiple_GWAS {
-    conda 'GenePrioritiser_env'
-    output:
-    path "step0_output.txt"
-
-    script:
-    """
-    export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step0_combine_multiple_GWAS.py" > step0_output.txt
-    """
-}
-
 process step1_annotate_genes {
     conda 'GenePrioritiser_env'
-    input:
-    path step0_out
+    // no input: Step 1 is the first preprocessing action (bedtools script)
 
     output:
     path "step1_output.txt"
@@ -21,11 +8,13 @@ process step1_annotate_genes {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step1_annotate_genes.py" > step1_output.txt
+    # Step 1 is a bash-driven bedtools annotation script
+    bash "${projectDir}/src/data_preprocessing/Step1_annotate_genes_bedtools.sh" || true
+    echo "step1_done" > step1_output.txt
     """
 }
 
-process step2_process_variant_level_data {
+process step2_harmonise_genes {
     conda 'GenePrioritiser_env'
     input:
     path step1_out
@@ -36,11 +25,11 @@ process step2_process_variant_level_data {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step2_process_variant_level_data.py" > step2_output.txt
+    python "${projectDir}/src/data_preprocessing/Step2_harmonise_genes.py" > step2_output.txt
     """
 }
 
-process step3_least_likely_gene_selection {
+process step3_process_variant_level_data {
     conda 'GenePrioritiser_env'
     input:
     path step2_out
@@ -51,14 +40,44 @@ process step3_least_likely_gene_selection {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step3_least_likely_gene_selection.py" > step3_output.txt
+    python "${projectDir}/src/data_preprocessing/Step3_process_variant_level_data.py" > step3_output.txt
+    """
+}
+
+process step4_least_likely_gene_selection {
+    conda 'GenePrioritiser_env'
+    input:
+    path step3_out
+
+    output:
+    path "step4_output.txt"
+
+    script:
+    """
+    export projectDir="${projectDir}"
+    python "${projectDir}/src/data_preprocessing/Step4_least_likely_gene_selection.py" > step4_output.txt
+    """
+}
+
+process step5_geneset_enrichment {
+    conda 'GenePrioritiser_env'
+    input:
+    path step4_out
+
+    output:
+    path "step5_output.txt"
+
+    script:
+    """
+    export projectDir="${projectDir}"
+    Rscript "${projectDir}/src/data_preprocessing/Step5_least_likely_geneset_enrichment.R" > step5_output.txt
     """
 }
 
 process step6_identify_training_genes {
     conda 'GenePrioritiser_env'
     input:
-    path step3_out
+    path step5_out
 
     output:
     path "step6_output.txt"
@@ -66,7 +85,7 @@ process step6_identify_training_genes {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step6_identify_training_genes.py" > step6_output.txt
+    python "${projectDir}/src/data_preprocessing/Step6_identify_training_genes.py" > step6_output.txt
     """
 }
 
@@ -81,11 +100,11 @@ process step7_merge_all_databases_and_get_training_data {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step7_merge_all_databases_and_get_training_data.py" > step7_output.txt
+    python "${projectDir}/src/data_preprocessing/Step7_merge_all_databases_and_get_training_data.py" > step7_output.txt
     """
 }
 
-process step8_subset_genes_to_prioritise {
+process step8_downsample_least_likely_genes {
     conda 'GenePrioritiser_env'
     input:
     path step7_out
@@ -96,14 +115,29 @@ process step8_subset_genes_to_prioritise {
     script:
     """
     export projectDir="${projectDir}"
-    python "\${projectDir}/src/data_preprocessing/scripts/Step8_subset_genes_to_prioritise.py" > step8_output.txt
+    python "${projectDir}/src/data_preprocessing/Step8_downsample_least_likely_genes.py" > step8_output.txt
+    """
+}
+
+process step9_subset_genes_to_prioritise {
+    conda 'GenePrioritiser_env'
+    input:
+    path step8_out
+
+    output:
+    path "step9_output.txt"
+
+    script:
+    """
+    export projectDir="${projectDir}"
+    python "${projectDir}/src/data_preprocessing/Step9_subset_genes_to_prioritise.py" > step9_output.txt
     """
 }
 
 process eda_training_data {
     conda 'GenePrioritiser_env'
     input:
-    path step8_out
+    path step9_out
 
     output:
     path "eda_output.txt"
@@ -161,14 +195,19 @@ process best_model_prioritisation {
 }
 
 workflow {
-    step0_out = step0_combine_multiple_GWAS()
-    step1_out = step1_annotate_genes(step0_out)
-    step2_out = step2_process_variant_level_data(step1_out)
-    step3_out = step3_least_likely_gene_selection(step2_out)
-    step6_out = step6_identify_training_genes(step3_out)
+    // Data-preprocessing: run Step1 -> Step9 in order
+    step1_out = step1_annotate_genes()
+    step2_out = step2_harmonise_genes(step1_out)
+    step3_out = step3_process_variant_level_data(step2_out)
+    step4_out = step4_least_likely_gene_selection(step3_out)
+    step5_out = step5_geneset_enrichment(step4_out)
+    step6_out = step6_identify_training_genes(step5_out)
     step7_out = step7_merge_all_databases_and_get_training_data(step6_out)
-    step8_out = step8_subset_genes_to_prioritise(step7_out)
-    eda_out = eda_training_data(step8_out)
+    step8_out = step8_downsample_least_likely_genes(step7_out)
+    step9_out = step9_subset_genes_to_prioritise(step8_out)
+
+    // EDA and machine-learning stages
+    eda_out = eda_training_data(step9_out)
     benchmark_out = model_benchmark(eda_out)
     weights_out = model_class_weights_benchmark(benchmark_out)
     best_model_prioritisation(weights_out)

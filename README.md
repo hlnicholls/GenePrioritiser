@@ -2,17 +2,39 @@
 
 Disease-specific gene prioritisation pipeline using GWAS summary statistics and various gene-level features to prioritise genes likely involved in disease.
 
+## Installation:
 
 ```
+git clone https://github.com/hlnicholls/GenePrioritiser
+cd GenePrioritiser
+
 conda env create -f GenePrioritiser_env.yml
 conda activate GenePrioritiser_env
 pip install --force-reinstall scikit-learn==1.4.2
 pip install --force-reinstall scipy==1.11.4
 pip install --force-reinstall numpy==1.23.0
 pip install scikit-optimize
+conda install -c bioconda bedtools htslib
+conda install -c conda-forge parallel
+pip install pybedtools intervaltree requests
+
+# R requirements: R (>= 4.0 recommended)
+Rscript install_R_packages.R
 ```
 
-Inputs/Requirements:
+## Requirements:
+
+### Download Gencode V19 GTF file (GRCh37/hg19)
+```
+# from repo root
+cd utils
+
+# download GENCODE v19 (GRCh37/hg19)
+curl -L -o gencode.v19.annotation.gtf.gz \
+  https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+```
+
+### Inputs
 - Add your GWAS data to ```/src/data_preprocessing/input```
 - Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file name```)
 - GWAS data in format of GWAS catalog format summary statistics in GRCh37
@@ -27,6 +49,8 @@ Inputs/Requirements:
 - Any added variant level data for processing as a feature needs name format {filename}_{phenotype}.csv
     - It needs to go in folder: /GenePrioritiser/example/data_preprocessing/output/variants
     - The median value will be taken per gene
+
+- Optional input can be made to further filter least likely genes identified in the pipeline for model training. This needs to be set to `least_likely_extra_filter` in the `config.py` (for example: `example/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv`) - this can identify genes via any requirements (e.g. genes with LD in the GWAS) for additional refining of least likely genes. This will reduce your list of least likely genes based on their PPIs with the input additional gene list.
 
 ## Expected GWAS file column name format
 

@@ -1,0 +1,19 @@
+# R package requirements for GenePrioritiser
+# This file lists the R packages required by scripts under src/data_preprocessing/
+# - Packages listed as CRAN will be installed with install.packages()
+# - Packages listed as Bioconductor should be installed with BiocManager::install()
+
+tidyverse    # CRAN
+magrittr     # CRAN
+data.table   # CRAN
+enrichR      # CRAN
+ggplot2      # CRAN
+reshape2     # CRAN
+org.Hs.eg.db # Bioconductor
+stringr      # CRAN (also provided by tidyverse, listed explicitly because Step4 uses stringr::str_detect)
+
+# Note: 'parallel' is part of base R (no installation needed).
+
+# To install everything quickly from R (preferred), run the accompanying
+# install_R_packages.R script in the project root:
+#   Rscript install_R_packages.R
