@@ -2,9 +2,11 @@
 library(ggplot2)
 library(reshape2)
 library(dplyr)
-
+config_path <- file.path('config', 'config.R')
+if (!file.exists(config_path)) stop('config/config.R not found — please create it and set least_likely_genes and disease_terms')
+source(config_path)
 # Read the data
-data <- read.csv("/machine_learning/multiclass/output/fold_balanced_accuracies.csv")
+data <- read.csv(paste0(ml_plot_folder, "per_fold_balanced_accuracies.csv"))
 
 # Melt the data for ggplot2
 data_melted <- melt(data, id.vars = 'X', variable.name = 'Fold', value.name = 'Balanced_Accuracy')
@@ -34,5 +36,5 @@ plot <- data_melted %>%
   ylab("Balanced Accuracy")
 
 # Save the plot
-ggsave("/machine_learning/multiclass/output/model_performance_violin_plot.png",
+ggsave(paste0(ml_plot_folder, "model_performance_violin_plot.png"),
        plot = plot, width = 18, height = 8, dpi = 300, limitsize = FALSE)
