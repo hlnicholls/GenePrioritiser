@@ -2,11 +2,11 @@ import os
 import pandas as pd
 import numpy as np
 import sys
-import os
-CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
-sys.path.append(CONFIG_DIR)
+if CONFIG_DIR not in sys.path:
+    sys.path.insert(0, CONFIG_DIR)
 import config
 
 def read_file(file_path):
@@ -81,6 +81,15 @@ def run_data_merge():
     if main_df is not None:
         main_df = rename_columns(main_df, column_renames)
         main_df = drop_non_numeric_columns(main_df)
+        # Ensure unique Gene rows: if source files contained duplicate Gene entries
+        # the outer merge can create multiple rows per Gene. Aggregate numeric
+        # features by mean so each Gene appears only once in the ML feature table.
+        if 'Gene' in main_df.columns:
+            dup_count = main_df['Gene'].duplicated().sum()
+            if dup_count > 0:
+                print(f"Found {dup_count} duplicate Gene entries in merged data - aggregating numeric features by mean to collapse duplicates.")
+                # groupby mean will keep 'Gene' and average numeric columns
+                main_df = main_df.groupby('Gene', as_index=False).mean()
         all_data_path = config.all_genes_all_features_unprocessed
         filter_and_save(main_df, all_data_path)
         print(f"All merged databases saved to {all_data_path}")
@@ -95,8 +104,32 @@ def run_data_merge():
 def join_training_data_with_features(training_data_path, ml_data_path, output_paths):
     try:
         training_df = pd.read_csv(training_data_path, sep='\t')  # Assuming training data is tab-separated
+        # Print counts per unique label in the training genes file (case-insensitive 'label')
+        # This helps confirm how many 'most likely', 'probable', 'least likely' genes we have.
+        label_col = None
+        for col in training_df.columns:
+            if col.lower() == 'label':
+                label_col = col
+                break
+        if label_col is not None:
+            counts = training_df[label_col].value_counts(dropna=False)
+            print("Training genes counts per label:")
+            for lbl, cnt in counts.items():
+                print(f"  {lbl}: {cnt}")
+        else:
+            print(f"No 'label' column found in training data. Columns present: {list(training_df.columns)}")
         ml_df = pd.read_csv(ml_data_path)
+        # If ml_df contains duplicate Gene rows, a left-merge will expand the
+        # training set multiplicatively. Collapse duplicates in ml_df first by
+        # aggregating numeric features (mean). If duplicates exist, warn the user.
+        if 'Gene' in ml_df.columns:
+            dup_ml = ml_df['Gene'].duplicated().sum()
+            if dup_ml > 0:
+                print(f"Warning: ML features file has {dup_ml} duplicate Gene rows - aggregating numeric features by mean to avoid duplicating training rows.")
+                ml_df = ml_df.groupby('Gene', as_index=False).mean()
+
         result_df = pd.merge(training_df, ml_df, on='Gene', how='left')
+        # If training_df itself contained duplicate rows, drop exact duplicates
         result_df.drop_duplicates(inplace=True)
         for output_path in output_paths:
             result_df.to_csv(output_path, index=False)

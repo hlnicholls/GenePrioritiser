@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 import sys
 import os
-CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
-CONFIG_DIR = os.path.join(ROOT_DIR, "config")
-sys.path.append(CONFIG_DIR)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
+CONFIG_DIR = os.path.join(ROOT_DIR, 'config')
+if CONFIG_DIR not in sys.path:
+    sys.path.insert(0, CONFIG_DIR)
 import config
 
 import pickle

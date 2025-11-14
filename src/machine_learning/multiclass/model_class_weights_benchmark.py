@@ -3,10 +3,11 @@ import numpy as np
 import pickle
 import sys
 import os
-CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
-CONFIG_DIR = os.path.join(ROOT_DIR, "config")
-sys.path.append(CONFIG_DIR)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
+CONFIG_DIR = os.path.join(ROOT_DIR, 'config')
+if CONFIG_DIR not in sys.path:
+    sys.path.insert(0, CONFIG_DIR)
 import config
 
 from tensorflow.keras.models import Sequential
@@ -82,7 +83,8 @@ models = [
     ('LGBM', LGBMClassifier(random_state=seed, verbose=-1, class_weight='balanced')),
     ('CatBoost', CatBoostClassifier(random_seed=seed, verbose=False, auto_class_weights='Balanced')),
     ('RF', RandomForestClassifier(random_state=seed, class_weight='balanced')),
-    ('LR', LogisticRegression(random_state=seed, multi_class='multinomial', class_weight='balanced')),
+        # increase max_iter and use saga solver to reduce convergence warnings on large data
+        ('LR', LogisticRegression(random_state=seed, multi_class='multinomial', class_weight='balanced', solver='saga', max_iter=2000)),
     ('SVC', SVC(random_state=seed, probability=True, class_weight='balanced')),
     ('NN', nn_model)
 ]
@@ -113,7 +115,11 @@ for name, model in models:
         X_tr, Y_tr = X_train, Y_train
     
     # Assuming `search` is the BayesSearchCV object:
-    search = BayesSearchCV(model, params[name], n_iter=10, cv=inner_cv, n_jobs=-1, random_state=seed)
+        # Setup BayesSearchCV for nested CV. We do NOT pre-fit the search before outer CV.
+        # For non-Keras estimators we allow parallel execution; for the Keras NN we
+        # force n_jobs=1 to avoid multiprocessing issues with TensorFlow/Keras.
+        bs_n_jobs = -1 if name != 'NN' else 1
+        search = BayesSearchCV(model, params[name], n_iter=10, cv=inner_cv, n_jobs=bs_n_jobs, random_state=seed)
     search.fit(X_tr, Y_tr)
     
     cv_results = cross_validate(search, X_tr, Y_tr, cv=outer_cv, scoring=scoring_metrics)
@@ -206,9 +212,15 @@ else:
 
 Feature_Selector = UpdatedBorutaShap(importance_measure="shap", classification=False)
 Feature_Selector.fit(X=X_train, y=Y_train, n_trials=100, random_state=seed)
-fig = plt.gcf()  
-fig.savefig(config.boruta_shap_plot_class_weighted, dpi=300, bbox_inches='tight')  
-plt.close(fig) 
+# Render the BorutaShap boxplot into the current matplotlib figure, then save.
+# Calling .plot(display=True) draws the plot; with the Agg backend plt.show() is a no-op
+# that leaves the figure available to save. We then save the current figure to the
+# configured path. This avoids saving an empty figure returned by plt.gcf() before
+# any plotting commands have been executed.
+Feature_Selector.plot(display=True)
+fig = plt.gcf()
+fig.savefig(config.boruta_shap_plot_class_weighted, dpi=300, bbox_inches='tight')
+plt.close(fig)
 
 
 print('Saving best model...')

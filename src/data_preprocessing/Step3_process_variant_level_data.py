@@ -2,10 +2,13 @@ import os
 import pandas as pd
 import fnmatch
 import sys
-CURRENT_DIR = os.getcwd()
-ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+# Compute paths relative to the script file so the script works regardless
+# of the current working directory when executed.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config")
-sys.path.append(CONFIG_DIR)
+if CONFIG_DIR not in sys.path:
+    sys.path.insert(0, CONFIG_DIR)
 import config
 
 # Directory containing input files
