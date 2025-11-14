@@ -1,0 +1,22 @@
+{
+  "seed": 42,
+  "target_total": 51,
+  "original_least": 563,
+  "per_bin": {
+    "0": {
+      "desired": 17,
+      "available": 335,
+      "taken": 17
+    },
+    "1": {
+      "desired": 17,
+      "available": 152,
+      "taken": 17
+    },
+    "2": {
+      "desired": 17,
+      "available": 76,
+      "taken": 17
+    }
+  }
+}
