@@ -22,3 +22,17 @@ GenePrioritiser_env_macos.yml
 /example/downstream
 
 /utils/clean_dbs.py
+
+# Ignore large example inputs and outputs we don't want in the repo
+example/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv
+example/data_preprocessing/input/Evangelou_30224653_DBP.txt.gz
+example/data_preprocessing/input/Evangelou_30224653_PP.txt.gz
+example/data_preprocessing/input/Evangelou_30224653_SBP.txt.gz
+example/data_preprocessing/input/Evangelou_BP.txt.gz
+# ignore the whole example variants output directory
+example/data_preprocessing/output/variants/
+
+# Large utility/reference files
+utils/gencode.v19.annotation.gtf.gz
+utils/gencode_v19.genes.ext10000.sorted.bed
+utils/hgnc_complete_set.txt
