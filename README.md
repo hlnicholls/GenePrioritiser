@@ -24,14 +24,31 @@ Rscript install_R_packages.R
 
 ## Requirements:
 
-### Download Gencode V19 GTF file (GRCh37/hg19)
-```
-# from repo root
-cd utils
+### Download GenePrioritiser-db
+**Several databases need to be downloaded to provide gene annotation and model features to run the pipeline. These can be be downloaded from: [huggingface.co/datasets/hlnicholls/GenePrioritiser-db](https://huggingface.co/datasets/hlnicholls/GenePrioritiser-db)**
 
-# download GENCODE v19 (GRCh37/hg19)
-curl -L -o gencode.v19.annotation.gtf.gz \
-  https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+This dataset includes the `/databases` which needs to be downloaded to the repository root.
+
+The gene annotation files need to be added to `/utils`
+
+The dataset also includes an example which can be downloaded and run with this repository's current config settings (replace `/example` with the download `/example` from huggingface to run with the full data)
+
+To download the huggingface dataset, you can use either Git LFS or the Hugging Face CLI/Python API.
+
+#### Download postgwas-db with Git LFS
+```bash
+git lfs install --skip-repo
+git clone https://huggingface.co/datasets/hlnicholls/GenePrioritiser-db
+```
+
+#### Or in Python:
+```python
+from huggingface_hub import snapshot_download
+snapshot_download(
+    repo_id="hlnicholls/GenePrioritiser-db",
+    repo_type="dataset",
+    local_dir="./GenePrioritiser-db"
+)
 ```
 
 ### Inputs
@@ -113,3 +130,7 @@ nextflow run main.nf -profile conda
 
 ## Outputs
  - Results are found in output subfolders. E.g., ```/GenePrioritiser/results/machine_learning/multiclass/output```
+
+## Example
+
+An example GWAS summary statistics file and training genes files are included in hugginface dataset (prioritising genes for blood pressure GWASs). Interactive results are also shown on huggingface: [huggingface.co/spaces/hlnicholls/BP-GWAS-Prioritise](https://huggingface.co/spaces/hlnicholls/BP-GWAS-Prioritise)

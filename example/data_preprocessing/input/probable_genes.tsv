@@ -1,150 +1,146 @@
-Gene	label
-AKT2	probable
-AMH	probable
-ANGPT2	probable
-AQP1	probable
-ARMS2	probable
-ARVCF	probable
-AS3MT	probable
-ATP2B1	probable
-BCL2	probable
-BDNF	probable
-CA7	probable
-CASP9	probable
-CAV1	probable
-CCKBR	probable
-CDKAL1	probable
-CDKN1A	probable
-CHKA	probable
-CLCNKA	probable
-CLOCK	probable
-CNTF	probable
-CTF1	probable
-CTNNB1	probable
-CYP11B1	probable
-CYP17A1	probable
-CYP21A2	probable
-DALRD3	probable
-DBH	probable
-DDAH1	probable
-DPEP1	probable
-EPB41	probable
-ESR1	probable
-ESRRG	probable
-F2	probable
-FES	probable
-FGF5	probable
-FIP1L1	probable
-FTO	probable
-GABBR1	probable
-GATA2	probable
-GCK	probable
-GDF2	probable
-GIP	probable
-GIPR	probable
-GNAS	probable
-GPR3	probable
-GRIN2B	probable
-HLA-B	probable
-HLA-DQA1	probable
-HLA-DRA	probable
-HRH1	probable
-HSPA1A	probable
-HSPA1L	probable
-HTR1D	probable
-HTR4	probable
-IDH2	probable
-IGF1	probable
-IGFBP3	probable
-IL6	probable
-IRS2	probable
-ITGA2B	probable
-JAG1	probable
-KCNB1	probable
-KCNH3	probable
-KCNH4	probable
-KCNK3	probable
-KCNK9	probable
-KCNQ5	probable
-KDM1A	probable
-KDM6B	probable
-LIMK1	probable
-MAP4	probable
-MAPK7	probable
-MAPKAP1	probable
-MAPT	probable
-MCL1	probable
-MDK	probable
-MLH1	probable
-MPL	probable
-MTHFR	probable
-MTNR1B	probable
-MYH6	probable
-MYH7	probable
-MYH7B	probable
-NDUFA2	probable
-NDUFS3	probable
-NOS3	probable
-NQO1	probable
-NRG1	probable
-NRIP1	probable
-NT5C2	probable
-NUCB2	probable
-OPRM1	probable
-OSGIN2	probable
-P2RY6	probable
-PDE10A	probable
-PDE11A	probable
-PDE3A	probable
-PDE5A	probable
-PDE8A	probable
-PDGFC	probable
-PDGFRA	probable
-PER1	probable
-PHACTR1	probable
-PIK3R3	probable
-PKD1L3	probable
-PLA2G1B	probable
-PPM1A	probable
-PPP3CA	probable
-PPP3CB	probable
-PRRC2A	probable
-PSMB4	probable
-PSMC3	probable
-PSMD11	probable
-PSMD5	probable
-PTEN	probable
-PTGES3	probable
-PYY	probable
-RARRES1	probable
-SBF2	probable
-SCN10A	probable
-SCN2A	probable
-SH2B3	probable
-SHMT1	probable
-SIK1	probable
-SIK2	probable
-SIK3	probable
-SLC16A1	probable
-SLC22A7	probable
-SMAD3	probable
-SPR	probable
-STAT5B	probable
-STK39	probable
-TAGLN	probable
-TCF7L2	probable
-TERT	probable
-TET2	probable
-TGFBR3	probable
-THBS2	probable
-TMCO6	probable
-TNFSF12	probable
-TP53	probable
-TRIM13	probable
-TUBD1	probable
-UBASH3B	probable
-UMOD	probable
-VAMP2	probable
-VDR	probable
-YES1	probable
-ZAP70	probable
+Gene
+RET
+PDE6C
+GRIA4
+GUCY1A2
+GRIK4
+PDE3B
+ABCC8
+TH
+F2
+NDUFS3
+CHRM1
+PDE2A
+PAH
+GRIN2B
+PDE3A
+NDUFA9
+VDR
+SCN8A
+PDE1B
+AVPR1A
+NDUFA12
+FLT3
+RXFP2
+EDNRB
+PTGER2
+ESR2
+KCNK10
+GABRB3
+GABRG3
+NDUFAF1
+MGAM
+CYP19A1
+CA12
+CHRNA3
+CHRNB4
+PDE8A
+GRIN2A
+NDUFB10
+NDUFAB1
+VKORC1
+SLC6A2
+SLC12A3
+TUBB3
+ADORA2B
+SLC6A4
+CA4
+CHRNB1
+NDUFV2
+PDE4A
+KEAP1
+BRD4
+PDE4C
+GRIK5
+GRIN2D
+INSR
+ADORA3
+ATP1A1
+IL6R
+CHRNB2
+ATP1A4
+ADORA1
+REN
+KCNK2
+PARP1
+CHRM3
+CNR2
+GRIK3
+FAAH
+PDE4B
+PTGFR
+BRDT
+ADRA1D
+TUBB1
+RRM2
+IL1R1
+ROCK2
+GPD2
+SCN2A
+SCN7A
+NFE2L2
+PDE6D
+CHRND
+CHRNG
+NDUFA10
+KCNK3
+XDH
+CD80
+CD86
+PPARG
+AGTR1
+SCN5A
+SCN10A
+SCN11A
+IMPDH2
+TLR9
+NISCH
+ENPEP
+PDE5A
+NR3C2
+GUCY1A1
+GUCY1B1
+GRIA2
+ADRA2C
+GABRG1
+GABRA2
+GABRB1
+PDGFRA
+KIT
+KDR
+NDUFA2
+NR3C1
+PDE6A
+GLRA1
+GRIA1
+ADRA1B
+DRD1
+FLT4
+NDUFS4
+PDE4D
+NDUFAF2
+HMGCR
+PDE8B
+PDE7B
+ESR1
+OPRM1
+PDE10A
+TNF
+BRD2
+GLP1R
+CNR1
+NDUFA5
+IMPDH1
+TBXAS1
+PDE1C
+CYP3A5
+CYP3A7
+CYP3A4
+CYP3A43
+KCNK9
+PTK2
+C5
+NDUFA8
+ABL1
+DBH
+BRD3

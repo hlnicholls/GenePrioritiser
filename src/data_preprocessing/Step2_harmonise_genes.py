@@ -3,7 +3,7 @@
 import os
 import sys
 from pathlib import Path
-from typing import Optional, Dict  # <- added for Python < 3.10
+from typing import Optional, Dict
 
 import pandas as pd
 
