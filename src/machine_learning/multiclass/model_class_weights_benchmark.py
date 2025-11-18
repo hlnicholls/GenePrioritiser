@@ -3,6 +3,8 @@ import numpy as np
 import pickle
 import sys
 import os
+# Ensure Python-level warnings are suppressed for this process and any child processes
+os.environ.setdefault('PYTHONWARNINGS', 'ignore')
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
 CONFIG_DIR = os.path.join(ROOT_DIR, 'config')
@@ -10,9 +12,7 @@ if CONFIG_DIR not in sys.path:
     sys.path.insert(0, CONFIG_DIR)
 import config
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Input
-from scikeras.wrappers import KerasClassifier
+# TensorFlow / scikeras imports removed — NN is handled in a separate script
 import sys
 script_dir = config.eda_script_path
 sys.path.append(script_dir)
@@ -30,6 +30,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import make_scorer, balanced_accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
 from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
 script_dir = config.boruta_shap_script
 if script_dir not in sys.path:
      sys.path.append(script_dir)
@@ -43,6 +44,7 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 seed = 0
 
@@ -65,18 +67,7 @@ X_test_scaled = scaler.transform(X_test)
 class_weights = compute_class_weight('balanced', classes=np.unique(Y_train), y=Y_train)
 weight_dict = dict(zip(np.unique(Y_train), class_weights))
 
-def create_nn_model():
-    model = Sequential()
-    model.add(Input(shape=(X_train.shape[1],)))  # Explicit Input layer
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(3, activation='softmax'))
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    return model
-
-nn_model = KerasClassifier(model=create_nn_model, epochs=50, batch_size=32, verbose=0)
+# Neural network model removed from this benchmark script (handled separately)
 
 models = [
     ('XGB', XGBClassifier(random_state=seed, objective='multi:softmax', num_class=3, eval_metric='mlogloss')),
@@ -86,7 +77,7 @@ models = [
         # increase max_iter and use saga solver to reduce convergence warnings on large data
         ('LR', LogisticRegression(random_state=seed, multi_class='multinomial', class_weight='balanced', solver='saga', max_iter=2000)),
     ('SVC', SVC(random_state=seed, probability=True, class_weight='balanced')),
-    ('NN', nn_model)
+        # ('NN', nn_model)  # NN model definition remains unchanged but is not included in the models list
 ]
 
 params = {
@@ -95,8 +86,7 @@ params = {
     'CatBoost': config.catboost_parameters,
     'RF': config.rf_parameters,
     'LR': config.lr_parameters,
-    'SVC': config.svc_parameters,
-    'NN': config.nn_parameters
+    'SVC': config.svc_parameters
 }
 
 
@@ -109,22 +99,20 @@ model_details = []
 fold_balanced_accuracies = []
 
 for name, model in models:
-    if name in ['LR', 'SVC', 'NN']:
+    # choose scaled or unscaled training data
+    if name in ['LR', 'SVC']:
         X_tr, Y_tr = X_train_scaled, Y_train
     else:
         X_tr, Y_tr = X_train, Y_train
-    
-    # Assuming `search` is the BayesSearchCV object:
-        # Setup BayesSearchCV for nested CV. We do NOT pre-fit the search before outer CV.
-        # For non-Keras estimators we allow parallel execution; for the Keras NN we
-        # force n_jobs=1 to avoid multiprocessing issues with TensorFlow/Keras.
-        bs_n_jobs = -1 if name != 'NN' else 1
-        search = BayesSearchCV(model, params[name], n_iter=10, cv=inner_cv, n_jobs=bs_n_jobs, random_state=seed)
+
+    # For all models use parallel search
+    bs_n_jobs = -1
+
+    search = BayesSearchCV(model, params[name], n_iter=10, cv=inner_cv, n_jobs=bs_n_jobs, random_state=seed)
     search.fit(X_tr, Y_tr)
-    
+
     cv_results = cross_validate(search, X_tr, Y_tr, cv=outer_cv, scoring=scoring_metrics)
     model_details.append((name, search.best_params_, cv_results))
-
     fold_balanced_accuracies.append(cv_results['test_balanced_accuracy'])
 
 # Create DataFrame to store balanced accuracy for each fold for each model

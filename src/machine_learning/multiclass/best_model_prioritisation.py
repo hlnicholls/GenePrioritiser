@@ -81,7 +81,7 @@ prob_df = pd.DataFrame(probabilities, columns=[f'Probability_{cls}' for cls in m
 # Preparing the output
 dataset_unknown = pd.read_csv(config.all_genes_all_features_unprocessed)
 output = pd.DataFrame(dataset_unknown['Gene'], columns=['Gene'])
-output['catboost_label'] = predictions
+output['best_model_label'] = predictions
 
 # Concatenate the gene labels and probabilities
 final_output = pd.concat([output, prob_df], axis=1)

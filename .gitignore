@@ -33,3 +33,7 @@ example/data_preprocessing/output/variants/
 utils/gencode.v19.annotation.gtf.gz
 utils/gencode_v19.genes.ext10000.sorted.bed
 utils/hgnc_complete_set.txt
+
+src/machine_learning/multiclass/nn_benchmark_class_weights.py
+
+Rplots.pdf

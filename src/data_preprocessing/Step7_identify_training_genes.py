@@ -28,65 +28,19 @@ ot_drugs = config.ot_phenotype_drugs
 
 annoted_data_path = config.variant_output_directory
 
-gwas_files = glob.glob(os.path.join(annoted_data_path, "Annotated_GWAS_*.csv"))
-gwas_gene_dfs = [pd.read_csv(f)[['Gene']].drop_duplicates() for f in gwas_files]
-gwas_genes_df = pd.concat(gwas_gene_dfs).drop_duplicates()
-
-# --- Load full annotated GWAS files and compute genes that have at least one P<0.01 in EACH annotated file ---
-# Requirement: a probable gene is retained only if it has at least one significant SNP (P < 0.01)
-# in every Annotated_GWAS_*.csv file (intersection across per-file gene sets).
-annot_pattern = os.path.join(config.variant_output_directory, "Annotated_GWAS_*.csv")
-annot_files = sorted(glob.glob(annot_pattern))
-if not annot_files:
-	# fallback to single annotated_gwas path if present in config
-	if hasattr(config, 'annotated_gwas') and os.path.exists(config.annotated_gwas):
-		annot_files = [config.annotated_gwas]
-
-significant_genes_perfile = set()
-if annot_files:
-	perfile_sets = []
-	for p in annot_files:
-		try:
-			dfp = pd.read_csv(p)
-		except Exception:
-			dfp = pd.read_csv(p, engine='python')
-		dfp['P'] = pd.to_numeric(dfp.get('P', pd.Series([])), errors='coerce')
-		if 'Gene' in dfp.columns:
-			genes_in_file = set(dfp[dfp['P'].notna() & (dfp['P'] < 0.01)]['Gene'].unique())
-			perfile_sets.append(genes_in_file)
-	if perfile_sets:
-		# intersection: genes present with at least one significant SNP in every file
-		significant_genes_perfile = set.intersection(*perfile_sets)
-		print(f"Identified {len(significant_genes_perfile)} genes with at least one P<0.01 SNP in EACH Annotated_GWAS file (per-file intersection)")
-	else:
-		print("Warning: no Gene column found in annotated GWAS files; skipping p-value based filtering for probable genes")
-else:
-	print("No Annotated_GWAS files found; skipping p-value based filtering for probable genes")
-
-
-# Read OT drugs file and select only 'gene' column, then remove duplicates
-ot_drugs_df = pd.read_csv(ot_drugs, sep='\t')
-ot_drugs_df = ot_drugs_df[['symbol']].drop_duplicates()
-ot_drugs_df = ot_drugs_df.rename(columns={'symbol': 'Gene'})
-
-# Read most likely genes file and select only 'Gene' column, then remove duplicates
-most_likely_genes_df = pd.read_csv(most_likely_genes_file, sep='\t')
-most_likely_genes_df = most_likely_genes_df[['Gene']].drop_duplicates()
-
-# Filter GWAS genes to those in OT drugs and not in most likely genes
-probable_genes_df = gwas_genes_df[
-	gwas_genes_df['Gene'].isin(ot_drugs_df['Gene'])
-	& ~gwas_genes_df['Gene'].isin(most_likely_genes_df['Gene'])
-]
-# Apply the per-file intersection filter: keep genes with at least one P<0.01 in every annotated file
-if significant_genes_perfile:
-	before_count = len(probable_genes_df)
-	probable_genes_df = probable_genes_df[probable_genes_df['Gene'].isin(significant_genes_perfile)].copy()
-	after_count = len(probable_genes_df)
-	print(f"Probable genes: {before_count} -> {after_count} after applying per-file P<0.01 intersection filter")
-else:
-	probable_genes_df = probable_genes_df.copy()
-	print("No genes matched the per-file P<0.01 intersection criterion; probable genes left unchanged.")
+# Read probable genes produced earlier by Step4. The selection of probable genes
+# (OT drug overlap + per-file P<0.01 intersection) is performed in
+# `Step4_probable_gene_selection.py`. Here we simply load the produced file.
+try:
+	probable_genes_df = pd.read_csv(config.probable_gene_path, sep='\t')
+	# ensure a 'Gene' column
+	if 'Gene' not in probable_genes_df.columns and probable_genes_df.shape[1] >= 1:
+		probable_genes_df.columns = ['Gene'] + list(probable_genes_df.columns[1:])
+	probable_genes_df = probable_genes_df[['Gene']].drop_duplicates().reset_index(drop=True)
+	print(f"Loaded {len(probable_genes_df)} probable genes from: {config.probable_gene_path}")
+except Exception as e:
+	print(f"Failed to read probable genes from {config.probable_gene_path}: {e}")
+	probable_genes_df = pd.DataFrame(columns=['Gene'])
 
 # Defensive: ensure probable_genes_df is a DataFrame with a proper index so we can
 # safely assign a new column even if it is empty.
@@ -97,6 +51,14 @@ probable_genes_df = probable_genes_df.reset_index(drop=True)
 # Read other gene files
 least_likely_df = pd.read_csv(least_likely_file, sep='\t').copy()
 most_likely_genes_df = pd.read_csv(most_likely_genes_file, sep='\t').copy()
+try:
+	if 'Gene' in most_likely_genes_df.columns:
+		ml_count = int(most_likely_genes_df['Gene'].drop_duplicates().shape[0])
+	else:
+		ml_count = int(most_likely_genes_df.shape[0])
+	print(f"Loaded {ml_count} most likely genes from: {most_likely_genes_file}")
+except Exception:
+	print(f"Loaded most likely genes from: {most_likely_genes_file}")
 
 # Add 'label' column to each DataFrame (use .loc to avoid SettingWithCopyWarning)
 least_likely_df.loc[:, 'label'] = 'least likely'

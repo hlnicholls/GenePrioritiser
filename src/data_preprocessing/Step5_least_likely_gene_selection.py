@@ -14,9 +14,9 @@ What this script does (high level):
         These seed genes and their N-hop interactors are excluded from the negative set.
     - Load all Annotated_GWAS_*.csv files from the configured variant output
         directory, coerce P to numeric, and keep only rows with non-significant
-        p-values (P > 0.05).
+        p-values (P > 0.01).
     - A gene is considered a candidate "least-likely" gene if ALL its annotated
-        SNP rows are non-significant (P > 0.05) and it is protein coding and not
+        SNP rows are non-significant (P > 0.01) and it is protein coding and not
         within the seed/interactor neighborhood.
     - Optionally apply an extra filter file (config.least_likely_extra_filter).
     - Write the final least-likely gene list to config.least_likely_gene_path.
@@ -187,13 +187,13 @@ gwas_df = pd.concat(df_list, ignore_index=True)
 # Ensure P is numeric
 gwas_df['P'] = pd.to_numeric(gwas_df.get('P', pd.Series([])), errors='coerce')
 
-# Keep only rows with non-significant p-values (P > 0.05)
-filtered_gwas = gwas_df[gwas_df['P'] > 0.05]
+# Keep only rows with non-significant p-values (P > 0.01)
+filtered_gwas = gwas_df[gwas_df['P'] > 0.01]
 
 # Select genes where all rows for that gene are non-significant
 if 'Gene' not in filtered_gwas.columns:
     raise KeyError('Gene column not found in annotated GWAS files')
-valid_genes = filtered_gwas.groupby('Gene').filter(lambda x: x['P'].notna().all() and all(x['P'] > 0.05))['Gene'].unique()
+valid_genes = filtered_gwas.groupby('Gene').filter(lambda x: x['P'].notna().all() and all(x['P'] > 0.01))['Gene'].unique()
 
 # Load gene types and filter for protein-coding genes
 gene_types_df = pd.read_csv(config.gene_types, sep='\t', header=None)
