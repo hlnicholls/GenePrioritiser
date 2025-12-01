@@ -140,7 +140,7 @@ def collect_interactors(seed_genes, interaction_dict, max_depth=2):
     return result
 
 
-MAX_INTERACTOR_DEPTH = getattr(config, 'interactor_max_depth', 3)
+MAX_INTERACTOR_DEPTH = getattr(config, 'interactor_max_depth', 2)
 
 # Build seed set from most-likely and probable genes
 seed_genes = set(most_likely_genes)
@@ -184,16 +184,44 @@ for p in annot_files:
 
 gwas_df = pd.concat(df_list, ignore_index=True)
 
-# Ensure P is numeric
-gwas_df['P'] = pd.to_numeric(gwas_df.get('P', pd.Series([])), errors='coerce')
-
-# Keep only rows with non-significant p-values (P > 0.01)
-filtered_gwas = gwas_df[gwas_df['P'] > 0.01]
-
-# Select genes where all rows for that gene are non-significant
-if 'Gene' not in filtered_gwas.columns:
+# detect gene column (case-insensitive)
+gene_col = None
+for c in gwas_df.columns:
+    if str(c).strip().lower() == 'gene':
+        gene_col = c
+        break
+if gene_col is None:
     raise KeyError('Gene column not found in annotated GWAS files')
-valid_genes = filtered_gwas.groupby('Gene').filter(lambda x: x['P'].notna().all() and all(x['P'] > 0.01))['Gene'].unique()
+
+# detect p-value column (case-insensitive)
+p_col = None
+for candidate in ['p', 'p_value', 'pvalue', 'p_val', 'pval', 'p.value', 'P']:
+    for c in gwas_df.columns:
+        if str(c).strip().lower() == candidate.lower():
+            p_col = c
+            break
+    if p_col is not None:
+        break
+if p_col is None:
+    raise KeyError('No p-value column found in annotated GWAS files')
+
+# p-value threshold for least-likely selection (can be overridden in config)
+pv_thresh = getattr(config, 'least_likely_pvalue_threshold', 0.01)
+
+print(f"Using gene column: '{gene_col}', p-value column: '{p_col}', threshold: {pv_thresh}")
+
+# Ensure p-values are numeric
+gwas_df[p_col] = pd.to_numeric(gwas_df[p_col], errors='coerce')
+
+# Select genes where ALL rows for that gene are non-significant (p > pv_thresh)
+# and p-values are present (not NaN)
+grouped = gwas_df.groupby(gene_col)
+valid_genes = []
+for g, grp in grouped:
+    grp_p = grp[p_col]
+    if grp_p.notna().all() and (grp_p > pv_thresh).all():
+        valid_genes.append(str(g))
+valid_genes = pd.unique(valid_genes)
 
 # Load gene types and filter for protein-coding genes
 gene_types_df = pd.read_csv(config.gene_types, sep='\t', header=None)
@@ -207,9 +235,10 @@ valid_genes = [gene for gene in valid_genes if gene in protein_coding_genes]
 least_likely_genes = [gene for gene in valid_genes if gene not in direct_and_indirect_interactors]
 
 # Save least likely genes to an intermediate sampling file (do not overwrite
-# the final least_likely_genes path here). This intermediate file will be
-# consumed by the downsampling step which will produce the final file.
-out_dir = os.path.join(ROOT_DIR, 'example', 'data_preprocessing', 'input', 'sampling')
+# the final least_likely_genes path here). Place this intermediate file next
+# to the configured final least_likely path (under a 'sampling' subdir) so
+# it follows the user's configured PROJECT_DIR (e.g., 'results').
+out_dir = os.path.join(os.path.dirname(config.least_likely_gene_path), 'sampling')
 os.makedirs(out_dir, exist_ok=True)
 intermediate_least_path = os.path.join(out_dir, 'least_likely_intermediate.tsv')
 least_likely_genes_df = pd.DataFrame({'Gene': least_likely_genes})
@@ -222,7 +251,7 @@ if hasattr(config, "least_likely_extra_filter") and os.path.exists(config.least_
     extra_genes = set(extra_df[0].unique())
     initial_gene_count = len(least_likely_genes)
     least_likely_genes = [gene for gene in least_likely_genes if gene not in extra_genes]
-    print(f"Filtered out {initial_gene_count - len(least_likely_genes)} genes based on additional criteria (no genes with SNPs in any LD with any BP loci).")
+    print(f"Filtered out {initial_gene_count - len(least_likely_genes)} genes based on additional criteria.")
 
 # Save least likely genes after optional additional filtering to the same
 # intermediate file (do not overwrite final least_likely file here)

@@ -7,9 +7,9 @@ PROJECT_DIR="${projectDir:-.}"
 # List of GWAS files to process (example defaults). Users should edit this
 # file to point to their GWAS summary statistics (GRCh37/hg19, gzipped).
 GWAS_PATHS=(
-  "$PROJECT_DIR/example/data_preprocessing/input/Evangelou_30224653_DBP.txt.gz"
-  "$PROJECT_DIR/example/data_preprocessing/input/Evangelou_30224653_SBP.txt.gz"
-  "$PROJECT_DIR/example/data_preprocessing/input/Evangelou_30224653_PP.txt.gz"
+  "$PROJECT_DIR/results/data_preprocessing/input/GCST90310294_SBP.tsv.gz"
+  "$PROJECT_DIR/results/data_preprocessing/input/GCST90310295_DBP.tsv.gz"
+  "$PROJECT_DIR/results/data_preprocessing/input/GCST90310296_PP.tsv.gz"
 )
 
 ## Optionally override GTF path here

@@ -34,8 +34,14 @@ if annot_files:
 			dfp = pd.read_csv(p)
 		except Exception:
 			dfp = pd.read_csv(p, engine='python')
-		if 'Gene' in dfp.columns:
-			g = pd.DataFrame(dfp['Gene'].drop_duplicates())
+		# find Gene column case-insensitively
+		gene_col = None
+		for c in dfp.columns:
+			if str(c).strip().lower() == 'gene':
+				gene_col = c
+				break
+		if gene_col is not None:
+			g = pd.DataFrame(dfp[gene_col].drop_duplicates())
 			g.columns = ['Gene']
 			gwas_gene_frames.append(g)
 	if gwas_gene_frames:
@@ -43,6 +49,12 @@ if annot_files:
 
 # Determine intersection of genes that have at least one P < 0.01 in every file
 significant_genes_perfile = set()
+# p-value threshold for probable gene selection (can be overridden in config)
+pv_thresh = getattr(config, 'probable_gene_pvalue_threshold', 0.01)
+# Control whether genes must have a significant SNP in every file (intersection)
+# or in any file (union). Default: union (at least one file) which matches
+# the typical "gene needs at least one SNP" interpretation.
+intersection_mode = getattr(config, 'probable_gene_intersection', False)
 if annot_files:
 	perfile_sets = []
 	for p in annot_files:
@@ -50,15 +62,45 @@ if annot_files:
 			dfp = pd.read_csv(p)
 		except Exception:
 			dfp = pd.read_csv(p, engine='python')
-		dfp['P'] = pd.to_numeric(dfp.get('P', pd.Series([])), errors='coerce')
-		if 'Gene' in dfp.columns:
-			genes_in_file = set(dfp[dfp['P'].notna() & (dfp['P'] < 0.01)]['Gene'].unique())
+
+		# detect gene column name
+		gene_col = None
+		for c in dfp.columns:
+			if str(c).strip().lower() == 'gene':
+				gene_col = c
+				break
+
+		# detect p-value column name (common variants)
+		p_col = None
+		for candidate in ['p', 'p_value', 'pvalue', 'p_val', 'pval', 'p.value', 'P']:
+			for c in dfp.columns:
+				if str(c).strip().lower() == candidate.lower():
+					p_col = c
+					break
+			if p_col is not None:
+				break
+
+		if p_col is None:
+			print(f"Warning: no p-value column found in {p}; this file will be ignored for p-value filtering")
+			continue
+
+		# coerce p-values
+		dfp[p_col] = pd.to_numeric(dfp[p_col], errors='coerce')
+
+		if gene_col is not None:
+			genes_in_file = set(dfp[dfp[p_col].notna() & (dfp[p_col] < float(pv_thresh))][gene_col].dropna().astype(str).unique())
 			perfile_sets.append(genes_in_file)
+		else:
+			print(f"Warning: 'Gene' column not found in {p}; this file will be ignored for p-value intersection")
 	if perfile_sets:
-		significant_genes_perfile = set.intersection(*perfile_sets)
-		print(f"Identified {len(significant_genes_perfile)} genes with at least one P<0.01 SNP in EACH Annotated_GWAS file (per-file intersection)")
+		if intersection_mode:
+			significant_genes_perfile = set.intersection(*perfile_sets)
+			print(f"Identified {len(significant_genes_perfile)} genes with at least one P<{pv_thresh} SNP in EACH Annotated_GWAS file (per-file INTERSECTION)")
+		else:
+			significant_genes_perfile = set().union(*perfile_sets)
+			print(f"Identified {len(significant_genes_perfile)} genes with at least one P<{pv_thresh} SNP in ANY Annotated_GWAS file (per-file UNION)")
 	else:
-		print("Warning: no Gene column found in annotated GWAS files; skipping p-value based filtering for probable genes")
+		print("Warning: no valid Annotated_GWAS files with a 'Gene' column found; skipping p-value based filtering for probable genes")
 else:
 	print("No Annotated_GWAS files found; probable gene selection will use OT-drugs overlap only")
 
@@ -99,12 +141,12 @@ if not ot_drugs_df.empty:
 if not most_likely_genes_df.empty:
 	probable_genes_df = probable_genes_df[~probable_genes_df['Gene'].isin(most_likely_genes_df['Gene'])]
 
-# Apply per-file P<0.01 intersection filter if available
-if significant_genes_perfile:
+# Apply per-file p-value intersection filter if annot files were present (even if intersection is empty)
+if annot_files and 'perfile_sets' in locals():
 	before_count = len(probable_genes_df)
 	probable_genes_df = probable_genes_df[probable_genes_df['Gene'].isin(significant_genes_perfile)].copy()
 	after_count = len(probable_genes_df)
-	print(f"Probable genes: {before_count} -> {after_count} after applying per-file P<0.01 intersection filter")
+	print(f"Probable genes: {before_count} -> {after_count} after applying per-file P<{pv_thresh} intersection filter")
 
 # Ensure Gene column exists and deduplicate
 if 'Gene' in probable_genes_df.columns:

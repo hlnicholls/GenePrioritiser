@@ -4,57 +4,68 @@ PROJECT_DIR = os.environ.get("projectDir", ".")
 
 # 1. Two files need to be provided by the user:
 gwas_path = [
-    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_DBP.txt.gz"),
-    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_SBP.txt.gz"),
-    os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_30224653_PP.txt.gz")
+    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310294_SBP.tsv.gz"),
+    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310295_DBP.tsv.gz"),
+    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310296_PP.tsv.gz")
 ]  # https://www.ebi.ac.uk/gwas/publications/30224653
-most_likely_gene_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/most_likely_genes.tsv")
+most_likely_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/most_likely_genes.tsv")
 
 # Download drugs for phenotype of interest from Open Targets:
 ot_phenotype_drugs = os.path.join(PROJECT_DIR, "databases/opentargets/EFO_0000537-known-drugs.tsv")
 
 # 2. Check file paths for all intermediate files:
-gwas_processed_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/Evangelou_BP.txt.gz")
+gwas_processed_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GWAS_BP.txt.gz")
 
-least_likely_extra_filter = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv")
+least_likely_extra_filter = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv")
 
-input_directory = os.path.join(PROJECT_DIR, "example/data_preprocessing/output")
-variant_output_directory = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/variants")
+input_directory = os.path.join(PROJECT_DIR, "results/data_preprocessing/output")
+variant_output_directory = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/variants")
 variant_database_output_directory = os.path.join(PROJECT_DIR, "databases/variant_level")
 
 database_path = os.path.join(PROJECT_DIR, "databases")
 database_string_path = os.path.join(PROJECT_DIR, "databases/stringdb/")
 
-least_likely_gene_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/least_likely_genes.tsv")
-annotated_gwas = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/variants/Annotated_GWAS_DBP.csv")
+least_likely_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/least_likely_genes.tsv")
+annotated_gwas = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/variants/Annotated_GWAS_DBP.csv")
 gene_types = os.path.join(PROJECT_DIR, "utils/hg19Rel92_AllgeneTypes_0kb.txt")
 
 # Probable genes defined by OT gene-drug interactions (not in most likely gene group)
-probable_gene_path = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/probable_genes.tsv")
+probable_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/probable_genes.tsv")
 
-training_genes = os.path.join(PROJECT_DIR, "example/data_preprocessing/input/training_genes.txt")
+# Probable gene selection options
+# p-value threshold for declaring a SNP "significant" when selecting probable genes.
+# Can be overridden by setting `probable_gene_pvalue_threshold` in this config.
+probable_gene_pvalue_threshold = 0.00001
+# Control whether a gene must have a significant SNP in EVERY annotated GWAS file
+# (intersection) or in ANY file (union). Default is union (False) which means a
+# gene only needs at least one significant SNP in any file to qualify.
+probable_gene_intersection = False
+# Least-likely gene selection p-value threshold (default: 0.01)
+least_likely_pvalue_threshold = 0.05
 
-all_genes_all_features_unprocessed = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/all_genes_merged_all_data.csv")
+training_genes = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/training_genes.txt")
 
-training_genes_features = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/training_data_all_features.csv")
-training_data_all_features_eda = os.path.join(PROJECT_DIR, "example/machine_learning/eda/input/training_data_all_features.csv")
+all_genes_all_features_unprocessed = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/all_genes_merged_all_data.csv")
 
-genes_to_prioritise = os.path.join(PROJECT_DIR, "example/data_preprocessing/output/gwas_genes_to_prioritise.csv")
+training_genes_features = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/training_data_all_features.csv")
+training_data_all_features_eda = os.path.join(PROJECT_DIR, "results/machine_learning/eda/input/training_data_all_features.csv")
+
+genes_to_prioritise = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/gwas_genes_to_prioritise.csv")
 
 # EDA
 eda_script_path = os.path.join(PROJECT_DIR, "src/machine_learning/eda")
-feature_missingness_plot = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/feature_missingness.png")
-correlation_pairs_09 = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/correlation_pairs_09.csv")
-correlation_matrix_09 = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/correlation_matrix_09.csv")
-cleaned_training_data = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/cleaned_training_data.csv")
-cleaned_training_data_eda = os.path.join(PROJECT_DIR, "example/machine_learning/eda/output/cleaned_training_data.csv")
+feature_missingness_plot = os.path.join(PROJECT_DIR, "results/machine_learning/eda/output/feature_missingness.png")
+correlation_pairs_09 = os.path.join(PROJECT_DIR, "results/machine_learning/eda/output/correlation_pairs_09.csv")
+correlation_matrix_09 = os.path.join(PROJECT_DIR, "results/machine_learning/eda/output/correlation_matrix_09.csv")
+cleaned_training_data = os.path.join(PROJECT_DIR, "results/machine_learning/eda/output/cleaned_training_data.csv")
+cleaned_training_data_eda = os.path.join(PROJECT_DIR, "results/machine_learning/eda/output/cleaned_training_data.csv")
 
 # Machine learning
-cleaned_training_data_ml = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/input/cleaned_training_data.csv")
-ml_eval_metrics = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/model_evaluation_metrics.csv")
-ml_output_path = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output")
+cleaned_training_data_ml = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/input/cleaned_training_data.csv")
+ml_eval_metrics = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/model_evaluation_metrics.csv")
+ml_output_path = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output")
 boruta_shap_script = os.path.join(PROJECT_DIR, "src/machine_learning/multiclass")
-boruta_shap_plot = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/borutashap_feature_importance_plot_no_class_weights.png")
+boruta_shap_plot = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/borutashap_feature_importance_plot_no_class_weights.png")
 
 xgb_parameters = {'max_depth': (1, 4), 'learning_rate': (0.01, 0.2, 'log-uniform'), 'n_estimators': (10, 50)}
 lgbm_parameters = {"max_depth": (1, 4), "learning_rate": (0.01, 0.2, "log-uniform"), "n_estimators": (10, 50)}
@@ -67,11 +78,11 @@ nn_parameters = {
     'batch_size': (16, 64),  # Batch size
 }
 
-boruta_shap_plot_class_weighted = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/borutashap_feature_importance_plot_class_weighted.png")
-balanced_accuracy_per_fold = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/per_fold_balanced_accuracies.csv")
-ml_eval_metrics_class_weighted = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/model_evaluation_metrics_class_weighted.csv")
-best_voting_model_pkl_file = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/best_voting_model_fitted.pkl")
-best_model_pkl_file = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/best_model_fitted.pkl")
-best_model_predictions = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/best_model_predictions_all_gwas_genes_with_probabilities.csv")
-all_imputed_features = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/all_genes_imputed_features.csv")
-best_model_predictions_all_genes = os.path.join(PROJECT_DIR, "example/machine_learning/multiclass/output/best_model_predictions_all_genes_with_probabilities.csv")
+boruta_shap_plot_class_weighted = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/borutashap_feature_importance_plot_class_weighted.png")
+balanced_accuracy_per_fold = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/per_fold_balanced_accuracies.csv")
+ml_eval_metrics_class_weighted = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/model_evaluation_metrics_class_weighted.csv")
+best_voting_model_pkl_file = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/best_voting_model_fitted.pkl")
+best_model_pkl_file = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/best_model_fitted.pkl")
+best_model_predictions = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/best_model_predictions_all_gwas_genes_with_probabilities.csv")
+all_imputed_features = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/all_genes_imputed_features.csv")
+best_model_predictions_all_genes = os.path.join(PROJECT_DIR, "results/machine_learning/multiclass/output/best_model_predictions_all_genes_with_probabilities.csv")

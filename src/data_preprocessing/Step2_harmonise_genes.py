@@ -8,6 +8,28 @@ from typing import Optional, Dict
 import pandas as pd
 
 
+def _read_table_with_sep(path: Path, **kwargs) -> pd.DataFrame:
+    """Read a CSV/TSV file and try to auto-detect the delimiter (tab or comma).
+
+    Falls back to pandas default if detection fails.
+    """
+    # try to sniff first line
+    with open(path, 'r', encoding=kwargs.pop('encoding', 'utf-8'), errors='replace') as fh:
+        first = fh.readline()
+    sep = '\t' if '\t' in first else ',' if ',' in first else None
+    if sep is None:
+        return pd.read_csv(path, engine='python', **kwargs)
+    return pd.read_csv(path, sep=sep, engine='python', **kwargs)
+
+
+def _find_gene_column(df: pd.DataFrame) -> Optional[str]:
+    """Return the actual column name for 'Gene' in a case-insensitive way, or None."""
+    for c in df.columns:
+        if str(c).strip().lower() == 'gene':
+            return c
+    return None
+
+
 def get_repo_root() -> Path:
     # This file lives in src/data_preprocessing -> src -> repo root
     return Path(__file__).resolve().parents[2]
@@ -138,15 +160,20 @@ def main():
     print("\n=== Harmonising Annotated_GWAS_* files ===")
     for path in annotated_files:
         print(f"  Processing {path.name} ...", end="", flush=True)
-        df = pd.read_csv(path, dtype=str, keep_default_na=False)
+        try:
+            df = _read_table_with_sep(path, dtype=str, keep_default_na=False)
+        except Exception as e:
+            print(f" [ERROR reading file: {e}]")
+            continue
 
-        if "Gene" not in df.columns:
+        gene_col = _find_gene_column(df)
+        if gene_col is None:
             print(" [SKIP: no 'Gene' column]")
             continue
 
-        before = df["Gene"].astype(str).copy()
-        df_h = harmonise_gene_column(df, symbol_map, col="Gene")
-        after = df_h["Gene"].astype(str)
+        before = df[gene_col].astype(str).copy()
+        df_h = harmonise_gene_column(df, symbol_map, col=gene_col)
+        after = df_h[gene_col].astype(str)
 
         n_changed = (before != after).sum()
         df_h.to_csv(path, index=False)
@@ -155,15 +182,20 @@ def main():
     print("\n=== Harmonising variant_data_* files ===")
     for path in variant_files:
         print(f"  Processing {path.name} ...", end="", flush=True)
-        df = pd.read_csv(path)
+        try:
+            df = _read_table_with_sep(path)
+        except Exception as e:
+            print(f" [ERROR reading file: {e}]")
+            continue
 
-        if "Gene" not in df.columns:
+        gene_col = _find_gene_column(df)
+        if gene_col is None:
             print(" [SKIP: no 'Gene' column]")
             continue
 
-        before = df["Gene"].astype(str).copy()
-        df_h = harmonise_gene_column(df, symbol_map, col="Gene")
-        after = df_h["Gene"].astype(str)
+        before = df[gene_col].astype(str).copy()
+        df_h = harmonise_gene_column(df, symbol_map, col=gene_col)
+        after = df_h[gene_col].astype(str)
 
         n_changed = (before != after).sum()
         df_h.to_csv(path, index=False)

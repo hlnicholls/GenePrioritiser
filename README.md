@@ -116,9 +116,8 @@ Optional input:
 ```
 conda activate GenePrioritiser_env 
 
-mkdir -p results/data_preprocessing/{input,output} \
-         results/machine_learning/eda/{input,output} \
-         results/machine_learning/{multiclassinput,multiclass/output}
+# Create output results folder directory structure (can be named as desired)
+bash src/data_preprocessing/Step0_directory_creation.sh "./results"
 
 # rename all /example/ files in config. to /results
 # upload GWAS file to /results/data_preprocessing/input

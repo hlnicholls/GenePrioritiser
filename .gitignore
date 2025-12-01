@@ -37,3 +37,5 @@ utils/hgnc_complete_set.txt
 src/machine_learning/multiclass/nn_benchmark_class_weights.py
 
 Rplots.pdf
+
+./results

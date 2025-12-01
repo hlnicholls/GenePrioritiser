@@ -15,3 +15,5 @@ __pycache__/
 .nextflow
 .pyc
 /work
+
+.results

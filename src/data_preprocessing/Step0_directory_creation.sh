@@ -60,12 +60,11 @@ else
     fi
 fi
 
-# normalize to absolute path
-PROJECT_DIR_ABS=$(python3 - <<PY
-import os,sys
-print(os.path.abspath(os.path.expanduser(sys.argv[1])))
-PY
-"$PROJECT_DIR")
+# ensure PROJECT_DIR is defined and normalize to absolute path
+PROJECT_DIR="${PROJECT_DIR:-.}"
+PROJECT_DIR_ABS=$(python3 -c 'import os,sys
+p=(sys.argv[1] if len(sys.argv)>1 and sys.argv[1] else ".")
+print(os.path.abspath(os.path.expanduser(p)))' "$PROJECT_DIR")
 
 echo "Creating directory skeleton under project root: $PROJECT_DIR_ABS"
 mkdir -p "$PROJECT_DIR_ABS"

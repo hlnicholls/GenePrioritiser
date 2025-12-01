@@ -162,7 +162,7 @@ for INP in "${INPUTS[@]}"; do
   export PY_ORIG="$ORIG_MAP"
   export PY_HDR="$HDR_FILE"
 
-  python - <<'PY'
+    python - <<'PY'
 import os, gzip
 
 fp = os.environ['PY_FILEPATH']
@@ -170,38 +170,29 @@ snps = os.environ['PY_SNPS']
 orig = os.environ['PY_ORIG']
 hdr_out = os.environ['PY_HDR']
 
-def find_idx(hdr, names):
-    for n in names:
-        if n in hdr:
-            return hdr.index(n)
-    return None
-
 def split_line(line: str):
-    """
-    Split a line on tabs if present, otherwise on any whitespace.
-    This makes the parser robust to both TSV and space-separated files.
-    """
     line = line.rstrip('\n')
-    if '\t' in line:
-        return line.split('\t')
-    else:
-        return line.split()
+    return line.split('\t') if '\t' in line else line.split()
 
 with gzip.open(fp, 'rt') as fh, open(snps, 'w') as sf, open(orig, 'w') as of, open(hdr_out, 'w') as hf:
     header = fh.readline().rstrip('\n')
     hf.write(header + '\n')
 
-    # robust header parsing
-    if '\t' in header:
-        cols = header.split('\t')
-    else:
-        cols = header.split()
+    cols = header.split('\t') if '\t' in header else header.split()
+    # build a lowercase name->index map for robust matching
+    lower_map = {c.lower(): i for i, c in enumerate(cols)}
 
-    # more generous detection of chromosome / position columns
-    chrom_idx  = find_idx(cols, ['CHROM', 'chr', 'Chromosome', 'CHR', 'chrom'])
-    pos_idx    = find_idx(cols, ['GENPOS', 'pos', 'position', 'POS', 'BP', 'bp'])
-    # marker / ID column (for 10:100000625:SNP style)
-    marker_idx = find_idx(cols, ['MarkerName', 'SNP', 'ID'])
+    def find_idx(names):
+        for n in names:
+            li = n.lower()
+            if li in lower_map:
+                return lower_map[li]
+        return None
+
+    # detect common names used in modern GWAS TSVs
+    chrom_idx  = find_idx(['chromosome', 'chrom', 'chr', 'chromosome_name'])
+    pos_idx    = find_idx(['base_pair_location', 'basepair', 'bp', 'position', 'pos', 'genpos'])
+    marker_idx = find_idx(['markername', 'snp', 'id', 'rs_id', 'rsid', 'rs'])
 
     n_snps = 0
     for lineno, line in enumerate(fh, start=2):
@@ -210,8 +201,7 @@ with gzip.open(fp, 'rt') as fh, open(snps, 'w') as sf, open(orig, 'w') as of, op
         pos = ''
 
         # Use explicit CHROM / POS if present
-        if chrom_idx is not None and pos_idx is not None \
-           and chrom_idx < len(parts) and pos_idx < len(parts):
+        if chrom_idx is not None and pos_idx is not None and chrom_idx < len(parts) and pos_idx < len(parts):
             if parts[chrom_idx] and parts[pos_idx]:
                 chrom = parts[chrom_idx]
                 pos = parts[pos_idx]
@@ -219,6 +209,7 @@ with gzip.open(fp, 'rt') as fh, open(snps, 'w') as sf, open(orig, 'w') as of, op
         # Fallback: parse from MarkerName / ID (e.g. "10:100000625:SNP")
         if (not chrom or not pos) and marker_idx is not None and marker_idx < len(parts):
             marker = parts[marker_idx]
+            # If marker looks like chr:pos:..., parse it
             if ':' in marker:
                 mparts = marker.split(':')
                 if len(mparts) >= 2:
@@ -262,6 +253,8 @@ PY
   base=$(basename "$FILEPATH")
   base=${base%.gz}
   base=${base%.txt}
+  base=${base%.tsv}
+  base=${base%.csv}
   phenotype=${base##*_}
   OUT_CSV="$OUT_DIR/Annotated_GWAS_${phenotype}.csv"
   VAR_CSV="$OUT_DIR/variant_data_${phenotype}.csv"
