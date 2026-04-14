@@ -10,10 +10,9 @@ cd GenePrioritiser
 
 conda env create -f GenePrioritiser_env.yml
 conda activate GenePrioritiser_env
-pip install --force-reinstall scikit-learn==1.4.2
-pip install --force-reinstall scipy==1.11.4
+python -m pip install --force-reinstall scikit-learn==1.4.2 scipy==1.11.4
 pip install --force-reinstall numpy==1.23.0
-pip install scikit-optimize
+conda install -c conda-forge scikit-optimize
 conda install -c bioconda bedtools htslib
 conda install -c conda-forge parallel
 pip install pybedtools intervaltree requests
@@ -47,16 +46,21 @@ from huggingface_hub import snapshot_download
 snapshot_download(
     repo_id="hlnicholls/GenePrioritiser-db",
     repo_type="dataset",
-    local_dir="./GenePrioritiser-db"
+    local_dir="./databases"
 )
 ```
 
 ### Inputs
-- Add your GWAS data to ```/src/data_preprocessing/input```
-- Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file name```)
-- GWAS data in format of GWAS catalog format summary statistics in GRCh37
-    - File header/column names: ```MarkerName Allele1 Allele2 Freq1 Effect StdErr P TotalSampleSize N_effective```
-- Ensure GWAS file name ends in ```_{phenotype}``` as file name suffix (e.g. "GWAS_Evangelou_DBP.txt.gz" where DBP is the phenotype)
+- Add your GWAS data to ```/input/full_gwas```
+- Update the ```/config/config.py``` file for your updated variables (e.g. GWAS file path```)
+- GWAS data must be GRCh37-based harmonized summary statistics from GWAS Catalog (or similar)
+    - File header/column names: ```chromosome base_pair_location effect_allele other_allele beta standard_error effect_allele_frequency p_value rsid n``` (or compatible variants)
+    - Supported alternative column names are automatically detected:
+      - **Chromosome**: `chromosome`, `chrom`, `chr`, `chromosome_name`
+      - **Position**: `base_pair_location`, `basepair`, `bp`, `position`, `pos`, `genpos`
+      - **Effect size**: `beta`, `effect`, `BETA`, `Effect`
+      - **P-value**: `p_value`, `pvalue`, `p_val`, `pval`, `p.value`, `p`, `P`
+- Ensure GWAS file name ends in ```_{phenotype}``` as file name suffix (e.g. "SBP_GCST90310294.h.tsv.gz" where SBP is the phenotype)
 - Include a text file list of labelled most likely/known disease-specific genes and a list of probable disease-specific genes
     - Example (most likely genes are those validated by an expert clinician as interacting with BP drugs, probable genes are annotated by those that interact with any BP drugs in Open Targets/CHEMBL): 
         - ```/GenePrioritiser/example/data_preprocessing/input/most_likely_genes.tsv```
@@ -71,16 +75,39 @@ snapshot_download(
 
 ## Expected GWAS file column name format
 
-The GWAS summary statistics should include the following columns (tab/whitespace-separated is fine). Example rows are shown below:
+The GWAS summary statistics should be GRCh37-based harmonized files from GWAS Catalog (or similar source). The following columns are **required**. The script automatically detects compatible column names using case-insensitive matching.
 
-| MarkerName | Allele1 | Allele2 | Freq1 | Effect | StdErr | P | TotalSampleSize | N_effective |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|---:|---:|
-| 10:100000625:SNP | a | g | 0.5663 | -0.0432 | 0.0174 | 0.01294 | 757601 | 756275 |
-| 10:100000645:SNP | a | c | 0.7935 | 0.0263 | 0.0214 | 0.218 | 757599 | 754442 |
-| 10:100001867:SNP | t | c | 0.0139 | -0.0424 | 0.0839 | 0.6128 | 742538 | 595603 |
-| 10:100003242:SNP | t | g | 0.8835 | 0.0696 | 0.0269 | 0.009814 | 757600 | 752479 |
+**Required columns:**
 
-Include your GRCh37 GWAS file in `GenePrioritiser/src/data_preprocessing/input`.
+| Column Name | Alternative Names | Description |
+|---|---|---|
+| chromosome | `chrom`, `chr`, `chromosome_name` | Chromosome number (1-22, X, Y) |
+| base_pair_location | `basepair`, `bp`, `position`, `pos`, `genpos` | Genomic position in GRCh37 |
+| p_value | `pvalue`, `p_val`, `pval`, `p.value`, `p`, `P` | P-value for the association |
+| beta | `effect`, `Effect`, `BETA` | Effect size (beta coefficient or log odds ratio) |
+
+**Optional but recommended columns:**
+
+| Column Name | Description |
+|---|---|
+| effect_allele | Alternative allele at the locus |
+| other_allele | Reference allele at the locus |
+| effect_allele_frequency | Frequency of the effect allele in the study population |
+| standard_error | Standard error of the effect size |
+| rsid | dbSNP rsID for the variant |
+| n | Sample size for this variant |
+
+**Example GWAS file (tab-separated, gzip-compressed):**
+
+```
+chromosome	base_pair_location	effect_allele	other_allele	beta	standard_error	effect_allele_frequency	p_value	rsid	n
+1	758351	G	A	0.0568	0.0584	0.1169	0.3309	rs12238997	730165
+1	787290	C	T	0.0242	0.076	0.0975	0.7499	rs116030099	730165
+1	794707	C	T	0.1523	0.0854	0.0514	0.07446	rs148120343	730165
+1	796338	C	T	0.0387	0.0517	0.1256	0.4538	rs58276399	730165
+```
+
+Include your GRCh37 GWAS file(s) in `GenePrioritiser/input/full_gwas/`.
 
 ## Expected training genes file format
 

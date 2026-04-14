@@ -1,9 +1,16 @@
-least_likely_genes <- "./results/data_preprocessing/input/sampling/least_likely_intermediate.tsv"
+least_likely_genes <- "./input/training/sampling/least_likely_intermediate.tsv"
 
 # Terms to consider as relevant disease terms when filtering enrichr pathway results
 # These are matched case-insensitively against pathway/term names.
-disease_terms <- c("blood pressure", "hypertension",  "hypotension", "cardio", "cardiac", "heart")
-
+disease_terms <- c("blood pressure", "hypertension", "hypotension", 
+                   "cardio", "cardiac", "pulse", "heart",
+                   "vascular", "vasculo",
+                   "renal", "kidney", "nephro",
+                   "renin", "angiotensin", "aldosterone",
+                   "sodium", "natriuretic",
+                   "stroke", "cerebrovascular",
+                   "adrenal")
+                   
 # Enrichr database list to query (can be extended)
 enrichr_dbs <- c("GWAS_Catalog_2025", "WikiPathway_2023_Human", "KEGG_2021_Human", "DisGeNET", "GO_Biological_Process_2025")
 

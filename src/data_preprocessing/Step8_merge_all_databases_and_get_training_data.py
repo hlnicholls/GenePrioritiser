@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import csv
 import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -21,8 +22,52 @@ def read_file(file_path):
         df.columns = df.columns.str.replace('[^a-zA-Z0-9_]', '', regex=True)
         return df
     except Exception as e:
-        print(f"Error reading {file_path}: {e}")
-        return None
+        # Retry with permissive parser settings for malformed quote characters.
+        try:
+            df = pd.read_csv(
+                file_path,
+                sep=sep,
+                engine='python',
+                on_bad_lines='skip',
+                quoting=csv.QUOTE_NONE
+            )
+            df.columns = df.columns.str.replace('[^a-zA-Z0-9_]', '', regex=True)
+            print(f"Warning: permissive parsing used for {file_path}")
+            return df
+        except Exception as e2:
+            print(f"Error reading {file_path}: {e2}")
+            return None
+
+
+def collapse_duplicates_by_gene(df):
+    """Collapse duplicate Gene rows by averaging numeric columns only."""
+    if df.columns.duplicated().any():
+        dup_names = df.columns[df.columns.duplicated()].tolist()
+        print(f"Warning: duplicate column names found ({len(dup_names)}). Keeping first occurrence for: {sorted(set(dup_names))}")
+        df = df.loc[:, ~df.columns.duplicated()]
+
+    if 'Gene' not in df.columns:
+        return df
+
+    dup_count = df['Gene'].duplicated().sum()
+    if dup_count <= 0:
+        return df
+
+    print(f"Found {dup_count} duplicate Gene entries in merged data - aggregating numeric features by mean to collapse duplicates.")
+
+    # Keep a copy of Gene and coerce all feature columns to numeric; non-numeric
+    # values (e.g. 'Y') become NaN and do not break mean aggregation.
+    coerced = df.copy()
+    feature_cols = [c for c in coerced.columns if c != 'Gene']
+    for col in feature_cols:
+        coerced[col] = pd.to_numeric(coerced[col], errors='coerce')
+
+    numeric_cols = [c for c in feature_cols if pd.api.types.is_numeric_dtype(coerced[c])]
+    if not numeric_cols:
+        return coerced[['Gene']].drop_duplicates().reset_index(drop=True)
+
+    collapsed = coerced.groupby('Gene', as_index=False)[numeric_cols].mean()
+    return collapsed
 
 def merge_data(base_dir, excluded_folders, file_types):
     main_df = None
@@ -81,16 +126,11 @@ def run_data_merge():
     if main_df is not None:
         main_df = rename_columns(main_df, column_renames)
         main_df = drop_non_numeric_columns(main_df)
-        # Ensure unique Gene rows: if source files contained duplicate Gene entries
-        # the outer merge can create multiple rows per Gene. Aggregate numeric
-        # features by mean so each Gene appears only once in the ML feature table.
-        if 'Gene' in main_df.columns:
-            dup_count = main_df['Gene'].duplicated().sum()
-            if dup_count > 0:
-                print(f"Found {dup_count} duplicate Gene entries in merged data - aggregating numeric features by mean to collapse duplicates.")
-                # groupby mean will keep 'Gene' and average numeric columns
-                main_df = main_df.groupby('Gene', as_index=False).mean()
+        main_df = collapse_duplicates_by_gene(main_df)
         all_data_path = config.all_genes_all_features_unprocessed
+        all_data_dir = os.path.dirname(all_data_path)
+        if all_data_dir:
+            os.makedirs(all_data_dir, exist_ok=True)
         filter_and_save(main_df, all_data_path)
         print(f"All merged databases saved to {all_data_path}")
 
@@ -126,12 +166,15 @@ def join_training_data_with_features(training_data_path, ml_data_path, output_pa
             dup_ml = ml_df['Gene'].duplicated().sum()
             if dup_ml > 0:
                 print(f"Warning: ML features file has {dup_ml} duplicate Gene rows - aggregating numeric features by mean to avoid duplicating training rows.")
-                ml_df = ml_df.groupby('Gene', as_index=False).mean()
+                ml_df = collapse_duplicates_by_gene(ml_df)
 
         result_df = pd.merge(training_df, ml_df, on='Gene', how='left')
         # If training_df itself contained duplicate rows, drop exact duplicates
         result_df.drop_duplicates(inplace=True)
         for output_path in output_paths:
+            out_dir = os.path.dirname(output_path)
+            if out_dir:
+                os.makedirs(out_dir, exist_ok=True)
             result_df.to_csv(output_path, index=False)
         print(f"Joined data saved to {output_paths}")
     except Exception as e:

@@ -16,6 +16,9 @@ input_directory = config.variant_output_directory
 # Merged beta(s) file path
 output_file = os.path.join(config.variant_database_output_directory, "merged_gene_median_variant_measures.csv")
 
+# Ensure output directory exists so merged output can be written.
+os.makedirs(config.variant_database_output_directory, exist_ok=True)
+
 # Initialize a list to store DataFrames
 processed_dfs = []
 

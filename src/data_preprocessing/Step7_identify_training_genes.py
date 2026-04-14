@@ -9,18 +9,36 @@ if CONFIG_DIR not in sys.path:
 	sys.path.insert(0, CONFIG_DIR)
 import config
 
-# Define absolute file paths
-# By default, read the least-likely genes from the intermediate file
-# produced by Step4 under any '*/data_preprocessing/input/sampling/' folder.
-# Fallback to config.least_likely_gene_path if not found.
-search_pattern = os.path.join(ROOT_DIR, '**', 'data_preprocessing', 'input', 'sampling', 'least_likely_intermediate.tsv')
-matches = glob.glob(search_pattern, recursive=True)
-if matches:
-	least_likely_file = matches[0]
-	print(f"Using intermediate least-likely genes file: {least_likely_file}")
-else:
+# Define absolute file paths.
+# Prefer pipeline-generated intermediate least-likely files in this repository,
+# and avoid accidentally picking bundled example files.
+preferred_candidates = [
+	os.path.join(ROOT_DIR, 'input', 'training', 'sampling', 'least_likely_intermediate.tsv'),
+	os.path.join(ROOT_DIR, 'results', 'data_preprocessing', 'input', 'sampling', 'least_likely_intermediate.tsv')
+]
+
+least_likely_file = None
+for candidate in preferred_candidates:
+	if os.path.exists(candidate):
+		least_likely_file = candidate
+		break
+
+if least_likely_file is None:
+	search_pattern = os.path.join(ROOT_DIR, '**', 'least_likely_intermediate.tsv')
+	matches = glob.glob(search_pattern, recursive=True)
+	# Exclude example/reference datasets.
+	matches = [
+		m for m in matches
+		if '/example/' not in m and '/GenePrioritiser-db/' not in m
+	]
+	if matches:
+		least_likely_file = matches[0]
+
+if least_likely_file is None:
 	least_likely_file = config.least_likely_gene_path
 	print(f"No intermediate least-likely file found; falling back to config path: {least_likely_file}")
+else:
+	print(f"Using intermediate least-likely genes file: {least_likely_file}")
 #probable_genes_file = config.probable_gene_path
 most_likely_genes_file = config.most_likely_gene_path
 output_file = config.training_genes
@@ -80,12 +98,18 @@ else:
 	out_df = combined_df[['Gene']].copy()
 
 # Save to output file (training genes)
+out_dir = os.path.dirname(output_file)
+if out_dir:
+	os.makedirs(out_dir, exist_ok=True)
 out_df.to_csv(output_file, sep='\t', index=False)
 
 # Also save the probable genes list to the configured path (if defined) to keep
 # files in-sync. Write a deduplicated Gene-only table if possible.
 try:
 	probable_out = config.probable_gene_path
+	probable_dir = os.path.dirname(probable_out)
+	if probable_dir:
+		os.makedirs(probable_dir, exist_ok=True)
 	if 'Gene' in probable_genes_df.columns:
 		probable_genes_df[['Gene']].drop_duplicates().to_csv(probable_out, sep='\t', index=False)
 	else:

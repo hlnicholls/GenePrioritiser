@@ -2,22 +2,30 @@ import os
 
 PROJECT_DIR = os.environ.get("projectDir", ".")
 
-# 1. Two files need to be provided by the user:
+# ── Resource limits ──────────────────────────────────────────────────────────
+# Maximum CPU cores and RAM available to the ML training scripts.
+# Adjust these to match your server's available resources.
+MAX_CORES = 16
+MAX_RAM_GB = 64
+
+# 1. GWAS input files (GRCh37-based, from GWAS Catalog or similar)
+# These are harmonized summary statistics with columns:
+#   chromosome, base_pair_location, beta, p_value (column names are auto-detected)
 gwas_path = [
-    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310294_SBP.tsv.gz"),
-    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310295_DBP.tsv.gz"),
-    os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GCST90310296_PP.tsv.gz")
-]  # https://www.ebi.ac.uk/gwas/publications/30224653
-most_likely_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/most_likely_genes.tsv")
+    os.path.join(PROJECT_DIR, "input/full_gwas/SBP_GCST90310294.tsv.gz"),
+    os.path.join(PROJECT_DIR, "input/full_gwas/DBP_GCST90310295.tsv.gz"),
+    os.path.join(PROJECT_DIR, "input/full_gwas/PP_GCST90310296.tsv.gz")
+]
+
+# Training gene lists (phenotype-specific known/probable/least-likely genes)
+most_likely_gene_path = os.path.join(PROJECT_DIR, "input/training/most_likely_genes.tsv")
+probable_gene_path = os.path.join(PROJECT_DIR, "input/training/probable_genes.tsv")
+least_likely_gene_path = os.path.join(PROJECT_DIR, "input/training/least_likely_genes.tsv")
 
 # Download drugs for phenotype of interest from Open Targets:
 ot_phenotype_drugs = os.path.join(PROJECT_DIR, "databases/opentargets/EFO_0000537-known-drugs.tsv")
 
-# 2. Check file paths for all intermediate files:
-gwas_processed_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/GWAS_BP.txt.gz")
-
-least_likely_extra_filter = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/BP_loci_Apr2020_LDr2-8_500kb.csv")
-
+# 2. Output and intermediate file paths
 input_directory = os.path.join(PROJECT_DIR, "results/data_preprocessing/output")
 variant_output_directory = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/variants")
 variant_database_output_directory = os.path.join(PROJECT_DIR, "databases/variant_level")
@@ -25,23 +33,23 @@ variant_database_output_directory = os.path.join(PROJECT_DIR, "databases/variant
 database_path = os.path.join(PROJECT_DIR, "databases")
 database_string_path = os.path.join(PROJECT_DIR, "databases/stringdb/")
 
-least_likely_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/least_likely_genes.tsv")
-annotated_gwas = os.path.join(PROJECT_DIR, "results/data_preprocessing/output/variants/Annotated_GWAS_DBP.csv")
+# Gene annotation reference
 gene_types = os.path.join(PROJECT_DIR, "utils/hg19Rel92_AllgeneTypes_0kb.txt")
-
-# Probable genes defined by OT gene-drug interactions (not in most likely gene group)
-probable_gene_path = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/probable_genes.tsv")
 
 # Probable gene selection options
 # p-value threshold for declaring a SNP "significant" when selecting probable genes.
 # Can be overridden by setting `probable_gene_pvalue_threshold` in this config.
-probable_gene_pvalue_threshold = 0.00001
+probable_gene_pvalue_threshold = 0.01 #0.00001
 # Control whether a gene must have a significant SNP in EVERY annotated GWAS file
 # (intersection) or in ANY file (union). Default is union (False) which means a
 # gene only needs at least one significant SNP in any file to qualify.
-probable_gene_intersection = False
+probable_gene_intersection = True
 # Least-likely gene selection p-value threshold (default: 0.01)
 least_likely_pvalue_threshold = 0.05
+# Least-likely PPI exclusion mode:
+#   "direct"               -> exclude only direct interactors (1 hop)
+#   "direct_and_secondary" -> exclude direct + second-degree interactors (2 hops)
+least_likely_ppi_mode = "direct_and_secondary"
 
 training_genes = os.path.join(PROJECT_DIR, "results/data_preprocessing/input/training_genes.txt")
 

@@ -10,13 +10,15 @@ What this script does (high level):
     - Load the "most likely" and optional "probable" gene lists (these are treated
         as positive seeds).
     - Perform a breadth-first search (BFS) from the seed genes to collect all genes
-        within N hops (configurable via config.interactor_max_depth; default 3).
+        within N hops. This is controlled by config.least_likely_ppi_mode:
+        "direct" (1 hop) or "direct_and_secondary" (2 hops).
+        Backward-compatible fallback: config.interactor_max_depth.
         These seed genes and their N-hop interactors are excluded from the negative set.
     - Load all Annotated_GWAS_*.csv files from the configured variant output
         directory, coerce P to numeric, and keep only rows with non-significant
-        p-values (P > 0.01).
+        p-values (P > 0.05).
     - A gene is considered a candidate "least-likely" gene if ALL its annotated
-        SNP rows are non-significant (P > 0.01) and it is protein coding and not
+        SNP rows are non-significant (P > 0.05) and it is protein coding and not
         within the seed/interactor neighborhood.
     - Optionally apply an extra filter file (config.least_likely_extra_filter).
     - Write the final least-likely gene list to config.least_likely_gene_path.
@@ -35,7 +37,8 @@ Notes and assumptions:
     - STRINGdb files are read from compressed TSVs; unmapped protein entries are
         removed before building interactions.
     - The interactor collection is BFS-based and includes genes reachable within
-        max_depth hops (default 3). The seeds themselves are also excluded.
+        max_depth hops (default 2 if no config is set). The seeds themselves are
+        also excluded.
     - The output is a single-column TSV with header 'Gene'. This file is used by
         downstream sampling/ML steps.
 
@@ -147,8 +150,40 @@ seed_genes = set(most_likely_genes)
 if probable_genes:
     seed_genes = seed_genes.union(probable_genes)
 
+# Resolve PPI filtering mode.
+# Supported modes (config.least_likely_ppi_mode):
+#   - "direct"                -> exclude only direct interactors (depth=1)
+#   - "direct_and_secondary"  -> exclude direct + second-degree interactors (depth=2)
+# Backward compatibility:
+#   - If least_likely_ppi_mode is not set, fall back to config.interactor_max_depth (if present),
+#     else default to direct_and_secondary (depth=2).
+ppi_mode = getattr(config, 'least_likely_ppi_mode', None)
+if ppi_mode is not None:
+    ppi_mode = str(ppi_mode).strip().lower()
+
+if ppi_mode in {'direct', 'direct_and_secondary'}:
+    MAX_INTERACTOR_DEPTH = 1 if ppi_mode == 'direct' else 2
+    print(f"Using PPI filter mode: {ppi_mode} (max_depth={MAX_INTERACTOR_DEPTH})")
+else:
+    # legacy behavior: explicit interactor_max_depth still works
+    MAX_INTERACTOR_DEPTH = getattr(config, 'interactor_max_depth', 2)
+    if ppi_mode is not None:
+        print(
+            f"Warning: unsupported least_likely_ppi_mode='{ppi_mode}'. "
+            f"Falling back to interactor_max_depth={MAX_INTERACTOR_DEPTH}."
+        )
+    else:
+        print(
+            "No least_likely_ppi_mode set; using interactor_max_depth="
+            f"{MAX_INTERACTOR_DEPTH} (legacy fallback)."
+        )
+
 # Collect interactors up to MAX_INTERACTOR_DEPTH
-direct_and_indirect_interactors = collect_interactors(seed_genes, interaction_dict, max_depth=MAX_INTERACTOR_DEPTH)
+direct_and_indirect_interactors = collect_interactors(
+    seed_genes,
+    interaction_dict,
+    max_depth=MAX_INTERACTOR_DEPTH,
+)
 
 # For reporting, also collect stats for direct only and one-level for diagnostics
 direct_only = collect_interactors(seed_genes, interaction_dict, max_depth=1)
@@ -206,7 +241,7 @@ if p_col is None:
     raise KeyError('No p-value column found in annotated GWAS files')
 
 # p-value threshold for least-likely selection (can be overridden in config)
-pv_thresh = getattr(config, 'least_likely_pvalue_threshold', 0.01)
+pv_thresh = getattr(config, 'least_likely_pvalue_threshold', 0.05)
 
 print(f"Using gene column: '{gene_col}', p-value column: '{p_col}', threshold: {pv_thresh}")
 
