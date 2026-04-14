@@ -1,6 +1,6 @@
 # Gene Prioritisation Pipeline
 
-Disease-specific gene prioritisation pipeline using GWAS summary statistics and various gene-level features to prioritise genes likely involved in disease.
+Disease-specific gene prioritisation pipeline using GWAS summary statistics and user-defined gene-level features to prioritise genes likely involved in disease.
 
 ## Installation:
 
