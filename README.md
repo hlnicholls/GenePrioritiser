@@ -2,6 +2,8 @@
 
 Disease-specific gene prioritisation pipeline using GWAS summary statistics and user-defined gene-level features to prioritise genes likely involved in disease.
 
+Interactive view of prioritisation results available here: https://huggingface.co/spaces/hlnicholls/GenePrioritiser-Interact
+
 ## Installation:
 
 ```
